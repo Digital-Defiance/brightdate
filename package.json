@@ -1,0 +1,54 @@
+{
+  "name": "@brightchain/brightdate",
+  "version": "0.31.0",
+  "description": "BrightDate - A scientifically grounded universal decimal time system based on J2000.0 epoch and TAI",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./src/index.d.ts",
+      "import": "./src/index.js",
+      "require": "./src/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Digital-Defiance/BrightDate.git",
+    "directory": "brightdate"
+  },
+  "homepage": "https://github.com/Digital-Defiance/BrightDate/tree/main/brightdate#readme",
+  "bugs": {
+    "url": "https://github.com/Digital-Defiance/BrightDate/issues"
+  },
+  "keywords": [
+    "time",
+    "timestamp",
+    "stardate",
+    "julian-date",
+    "tai",
+    "j2000",
+    "decimal-time",
+    "universal-time",
+    "brightdate"
+  ],
+  "author": "Digital Defiance",
+  "license": "MIT",
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^30.3.0",
+    "@types/node": "^20.0.0"
+  },
+  "type": "commonjs",
+  "scripts": {
+    "build": "npx nx build brightdate",
+    "test": "npx nx test brightdate",
+    "lint": "npx nx lint brightdate",
+    "build:prod": "npx nx build brightdate --configuration=production"
+  }
+}
