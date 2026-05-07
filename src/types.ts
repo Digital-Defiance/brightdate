@@ -12,6 +12,21 @@
 export type BrightDateValue = number;
 
 /**
+ * Decimal days since J2000.0 epoch (January 1, 2000, 12:00:00 UTC).
+ *
+ * This is a plain `number` (IEEE 754 float64), giving ~86 nanosecond precision
+ * at current epoch values and a range of ±2^53 days (~24.6 million years).
+ *
+ * @example
+ * ```typescript
+ * // Current time as BrightDateTimestamp
+ * import { BrightDate } from '@brightchain/brightdate';
+ * const now: BrightDateTimestamp = BrightDate.now().value;
+ * ```
+ */
+export type BrightDateTimestamp = BrightDateValue;
+
+/**
  * Precision level for display formatting.
  * 5 = ~0.86 seconds (daily life)
  * 8 = ~0.86 milliseconds (software)
