@@ -73,6 +73,7 @@ export {
   fromModifiedJulianDate,
   fromUnixMs,
   fromUnixSeconds,
+  normalize,
   now,
   parse,
   taiToUtcBrightDate,
@@ -121,6 +122,7 @@ export {
   roundToMicroday,
   roundToMilliday,
   sort,
+  sortComparator,
   subtract,
   wholeDaysBetween,
 } from './arithmetic';

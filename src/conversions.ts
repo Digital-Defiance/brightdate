@@ -256,3 +256,32 @@ export function parse(brightDateString: string): BrightDateValue {
   }
   return value;
 }
+
+/**
+ * Normalize any timestamp input to a BrightDateValue.
+ *
+ * Accepts a BrightDateValue (number), a JavaScript Date, or an ISO 8601 string
+ * and returns the equivalent BrightDateValue. Use this at system boundaries
+ * where external data may arrive in any of these forms.
+ *
+ * @param input - A BrightDateValue, JavaScript Date, or ISO 8601 string
+ * @returns BrightDateValue (decimal days since J2000.0)
+ * @throws TypeError if input is NaN, non-finite, or an unparseable date string
+ */
+export function normalize(input: BrightDateValue | Date | string): BrightDateValue {
+  if (typeof input === 'number') {
+    if (!isFinite(input)) {
+      throw new TypeError(`BrightDateValue must be a finite number, got: ${input}`);
+    }
+    return input;
+  }
+  if (input instanceof Date) {
+    return fromDate(input);
+  }
+  // string path — re-throw as TypeError for consistent error type
+  try {
+    return fromISO(input);
+  } catch {
+    throw new TypeError(`Invalid date string: "${input}"`);
+  }
+}

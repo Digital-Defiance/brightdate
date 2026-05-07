@@ -102,6 +102,25 @@ export function compare(a: BrightDateValue, b: BrightDateValue): -1 | 0 | 1 {
 }
 
 /**
+ * Sort comparator for BrightDate values, compatible with `Array.prototype.sort`.
+ *
+ * Returns `a - b` (a continuous number) rather than the discrete `-1 | 0 | 1`
+ * of `compare`, which is the idiomatic form expected by JavaScript sort.
+ *
+ * @example
+ * ```typescript
+ * const sorted = timestamps.sort(sortComparator);
+ * ```
+ *
+ * @param a - First BrightDate value
+ * @param b - Second BrightDate value
+ * @returns Negative if a < b, zero if equal, positive if a > b
+ */
+export function sortComparator(a: BrightDateValue, b: BrightDateValue): number {
+  return a - b;
+}
+
+/**
  * Check if two BrightDate values are equal within a tolerance.
  *
  * @param a - First BrightDate value
