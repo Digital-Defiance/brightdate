@@ -58,7 +58,7 @@
         "{workspaceRoot}/coverage/{projectRoot}"
       ],
       "options": {
-        "jestConfig": "brightdate/jest.config.ts",
+        "jestConfig": "brightdate/jest.config.cts",
         "codeCoverage": false
       },
       "configurations": {

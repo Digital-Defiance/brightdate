@@ -18,9 +18,19 @@ import type { BrightDateValue } from './types';
  *
  * @param date - JavaScript Date object
  * @returns BrightDate value (decimal days since J2000.0)
+ * @throws TypeError if `date` is not a Date instance or is an invalid Date
+ *   (NaN time, e.g. `new Date('not-a-date')`).
  */
 export function fromDate(date: Date): BrightDateValue {
+  if (!(date instanceof Date)) {
+    throw new TypeError(
+      `fromDate: expected a Date instance, got ${typeof date}`,
+    );
+  }
   const unixMs = date.getTime();
+  if (isNaN(unixMs)) {
+    throw new TypeError('fromDate: received an invalid Date (NaN time)');
+  }
   return (unixMs - J2000_UNIX_MS_UTC) / MS_PER_DAY;
 }
 
@@ -40,8 +50,14 @@ export function toDate(brightDate: BrightDateValue): Date {
  *
  * @param unixMs - Unix timestamp in milliseconds
  * @returns BrightDate value
+ * @throws TypeError if `unixMs` is NaN or not finite.
  */
 export function fromUnixMs(unixMs: number): BrightDateValue {
+  if (typeof unixMs !== 'number' || !isFinite(unixMs)) {
+    throw new TypeError(
+      `fromUnixMs: expected a finite number, got ${String(unixMs)}`,
+    );
+  }
   return (unixMs - J2000_UNIX_MS_UTC) / MS_PER_DAY;
 }
 
@@ -60,8 +76,14 @@ export function toUnixMs(brightDate: BrightDateValue): number {
  *
  * @param unixSeconds - Unix timestamp in seconds
  * @returns BrightDate value
+ * @throws TypeError if `unixSeconds` is NaN or not finite.
  */
 export function fromUnixSeconds(unixSeconds: number): BrightDateValue {
+  if (typeof unixSeconds !== 'number' || !isFinite(unixSeconds)) {
+    throw new TypeError(
+      `fromUnixSeconds: expected a finite number, got ${String(unixSeconds)}`,
+    );
+  }
   return fromUnixMs(unixSeconds * 1000);
 }
 
@@ -120,7 +142,25 @@ export function toModifiedJulianDate(brightDate: BrightDateValue): number {
 
 /**
  * Convert a UTC-based BrightDate to a TAI-based BrightDate.
- * TAI-based values are monotonically increasing (no leap second discontinuities).
+ *
+ * TAI-based values are monotonically increasing (no leap-second discontinuities)
+ * — use them for durations that must span leap seconds, audit trails, or any
+ * context where "seconds elapsed" must be the true physical count.
+ *
+ * ### Numerical note — this is NOT a simple +N seconds shift
+ *
+ * The function re-anchors to a TAI-based J2000 epoch (which is itself 32 s
+ * ahead of the UTC J2000 instant — that was the TAI-UTC offset at the
+ * J2000.0 moment). The numeric difference between the returned TAI
+ * BrightDate and the input UTC BrightDate equals
+ *   `(currentOffset − 32) / 86400` days
+ * NOT `currentOffset / 86400` days.
+ *
+ * - At J2000.0 (offset = 32): difference is 0.
+ * - At 2020-01-01 (offset = 37): difference is 5 seconds.
+ *
+ * If you want the pure TAI-minus-UTC offset in seconds at a given moment,
+ * call {@link getTaiUtcOffset} with the Unix-seconds timestamp.
  *
  * @param utcBrightDate - BrightDate value computed from UTC
  * @returns BrightDate value in TAI timescale
@@ -139,6 +179,9 @@ export function utcToTaiBrightDate(
 /**
  * Convert a TAI-based BrightDate to a UTC-based BrightDate.
  *
+ * Inverse of {@link utcToTaiBrightDate}. See that function's JSDoc for the
+ * re-anchoring explanation.
+ *
  * @param taiBrightDate - BrightDate value in TAI timescale
  * @returns BrightDate value in UTC timescale
  */
@@ -150,6 +193,30 @@ export function taiToUtcBrightDate(
   const offset = getTaiUtcOffset(taiSeconds - 37); // approximate UTC for offset lookup
   const utcSeconds = taiSeconds - offset;
   return fromUnixSeconds(utcSeconds);
+}
+
+/**
+ * Get the TAI − UTC offset in seconds at the moment a UTC BrightDate
+ * represents. This is the unambiguous "how many seconds is TAI ahead of
+ * UTC right now" number — the one most people mean when they say "TAI
+ * offset." Unlike {@link utcToTaiBrightDate}, which re-anchors to
+ * TAI-J2000, this returns the raw cumulative leap-second count.
+ *
+ * @example
+ * ```ts
+ * taiUtcOffsetSecondsAt(fromISO('2000-01-01T12:00:00Z'));  // 32
+ * taiUtcOffsetSecondsAt(fromISO('2020-06-15T00:00:00Z'));  // 37
+ * taiUtcOffsetSecondsAt(fromISO('1980-01-06T00:00:00Z'));  // 19
+ * ```
+ *
+ * @param utcBrightDate - BrightDate value (UTC-based)
+ * @returns Cumulative TAI-UTC offset in seconds at that instant
+ */
+export function taiUtcOffsetSecondsAt(
+  utcBrightDate: BrightDateValue,
+): number {
+  const unixSeconds = toUnixSeconds(utcBrightDate);
+  return getTaiUtcOffset(unixSeconds);
 }
 
 /**

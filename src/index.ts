@@ -11,7 +11,7 @@
  *
  * @example
  * ```typescript
- * import { BrightDate } from '@digitaldefiance/brightdate';
+ * import { BrightDate } from '@brightchain/brightdate';
  *
  * // Current time as a BrightDate
  * const now = BrightDate.now();
@@ -37,6 +37,9 @@
 // ─── Core Class ────────────────────────────────────────────────────────────────
 export { BrightDate } from './BrightDate';
 
+// ─── Exact (BigInt-based) Companion ────────────────────────────────────────────
+export { ExactBrightDate } from './ExactBrightDate';
+
 // ─── Intervals ─────────────────────────────────────────────────────────────────
 export { BrightDateInterval } from './intervals';
 
@@ -56,6 +59,9 @@ export {
   DEFAULT_PRECISION,
   J2000_UNIX_MS_UTC,
   LEAP_SECOND_TABLE,
+  LEAP_SECOND_TABLE_REVIEWED_AT,
+  LEAP_SECOND_TABLE_SOURCE,
+  LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S,
   MAX_PRECISION,
   METRIC_UNITS,
   MS_PER_DAY,
@@ -77,6 +83,7 @@ export {
   now,
   parse,
   taiToUtcBrightDate,
+  taiUtcOffsetSecondsAt,
   toDate,
   toGPSTime,
   toISO,

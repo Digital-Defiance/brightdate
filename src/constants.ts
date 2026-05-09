@@ -91,6 +91,39 @@ export const LEAP_SECOND_TABLE: ReadonlyArray<readonly [number, number]> = [
 ] as const;
 
 /**
+ * Source identifier for the leap second table.
+ * Update when the table is refreshed from IERS Bulletin C / IANA leap-seconds.list.
+ */
+export const LEAP_SECOND_TABLE_SOURCE = 'IERS Bulletin C / IANA leap-seconds.list';
+
+/**
+ * The Unix-seconds timestamp through which the leap second table is
+ * KNOWN TO BE CORRECT. This is the "valid-until" date published by IERS
+ * in the leap-seconds.list file. Past this timestamp, the library
+ * emits a warning (once per process) because a new leap second may
+ * have been inserted that is not reflected in the table.
+ *
+ * Current value: 2026-12-28T00:00:00Z
+ *
+ * IERS typically announces leap-second decisions ~6 months before each
+ * potential boundary (June 30 / December 31). The last announcement
+ * (January 2026) confirmed no leap second at end of June 2026, so the
+ * table is known-good through the next decision point (late 2026 for the
+ * December 2026 boundary). Update this constant when you refresh the
+ * table from IERS Bulletin C.
+ *
+ * Source: IERS Bulletin C announcements (confirmed via timeanddate.com,
+ * January 2026).
+ */
+export const LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S = 1_798_416_000; // 2026-12-28T00:00:00Z
+
+/**
+ * ISO date when this leap second table was last reviewed against IERS.
+ * Human-readable companion to {@link LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S}.
+ */
+export const LEAP_SECOND_TABLE_REVIEWED_AT = '2026-05-08';
+
+/**
  * Current TAI-UTC offset (seconds). Updated when new leap seconds are added.
  */
 export const CURRENT_TAI_UTC_OFFSET = 37;

@@ -9,8 +9,45 @@
 import {
   CURRENT_TAI_UTC_OFFSET,
   LEAP_SECOND_TABLE,
+  LEAP_SECOND_TABLE_REVIEWED_AT,
+  LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S,
   TAI_UTC_OFFSET_AT_J2000,
 } from './constants';
+
+/**
+ * Has the stale-leap-table warning already been emitted?
+ * We warn at most once per process to avoid log spam.
+ */
+let staleLeapTableWarned = false;
+
+/**
+ * Reset the internal "warned" flag. Exported for testing; production
+ * code shouldn't need this.
+ *
+ * @internal
+ */
+export function __resetLeapTableWarning(): void {
+  staleLeapTableWarned = false;
+}
+
+/**
+ * Emit a one-time warning when the caller queries a leap-second-sensitive
+ * function for a timestamp past the table's published validity window.
+ */
+function warnIfStale(utcUnixSeconds: number): void {
+  if (staleLeapTableWarned) return;
+  if (utcUnixSeconds <= LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S) return;
+  staleLeapTableWarned = true;
+  // Single structured console.warn so hosts can filter/route it
+  console.warn(
+    '[brightdate] Leap-second table is past its validity window ' +
+      `(reviewed ${LEAP_SECOND_TABLE_REVIEWED_AT}, valid through Unix ` +
+      `${LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S}). Queried Unix seconds=` +
+      `${utcUnixSeconds}. TAI calculations may be off by ±1s if a leap ` +
+      'second was inserted after table review. Update LEAP_SECOND_TABLE ' +
+      'from IERS Bulletin C if you need authoritative TAI past this date.',
+  );
+}
 
 /**
  * Get the TAI-UTC offset (in seconds) for a given UTC Unix timestamp (in seconds).
@@ -21,6 +58,8 @@ import {
  * @returns TAI-UTC offset in seconds at that moment
  */
 export function getTaiUtcOffset(utcUnixSeconds: number): number {
+  warnIfStale(utcUnixSeconds);
+
   // Before the first entry in the table (pre-1972), TAI-UTC is not well-defined
   // in integer seconds. We return 10 as the initial offset for simplicity.
   if (utcUnixSeconds < LEAP_SECOND_TABLE[0][0]) {

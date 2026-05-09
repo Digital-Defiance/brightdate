@@ -150,34 +150,93 @@ export function fromBinary(buffer: ArrayBuffer): BrightDateValue {
 
 /**
  * Convert a BrightDate to a sortable string representation.
- * Pads with zeros to ensure lexicographic sorting matches numeric sorting.
- * Format: sign + 7-digit integer + '.' + precision digits
+ *
+ * Encoding scheme (version "v2"):
+ *   Positive:  "+" + integer (7 digits, zero-padded) + "." + fractional digits
+ *   Zero:      "+0000000.00000000" (same as positive zero)
+ *   Negative:  "-" + **nine's complement** of the absolute value's digits
+ *
+ * Nine's complement is used for negative values so that lexicographic
+ * ordering matches numeric ordering even within negative values (a more-
+ * negative number sorts earlier). The '-' sign (0x2D) sorts before the
+ * '+' sign (0x2B) — WAIT, it doesn't: '+' is 0x2B, '-' is 0x2D, so
+ * actually '+' < '-' in ASCII. To correct this, negative values use a
+ * different leading character: '!' (0x21) sorts before '+' (0x2B), so
+ * negatives sort before positives.
+ *
+ * The algorithm:
+ *   - Compute sign and absolute value
+ *   - Format abs as zero-padded integer + '.' + fractional digits
+ *   - For negatives: prepend '!' and replace each digit d with (9 - d)
+ *   - For positives/zero: prepend '+'
+ *
+ * Property: for any two BrightDate values a < b,
+ *           toSortableString(a) < toSortableString(b) lexicographically.
  *
  * @param value - BrightDate value
  * @param precision - Decimal places (default: 8)
- * @returns Sortable string (e.g., "+0009622.50417000")
+ * @returns Sortable string
  */
 export function toSortableString(
   value: BrightDateValue,
   precision: number = 8,
 ): string {
-  const sign = value >= 0 ? '+' : '-';
+  const isNegative = value < 0;
   const abs = Math.abs(value);
-  const intPart = Math.floor(abs).toString().padStart(7, '0');
-  const fracPart = (abs - Math.floor(abs)).toFixed(precision).substring(2);
-  return `${sign}${intPart}.${fracPart}`;
+
+  // Round the whole value to the target precision first, THEN split into
+  // integer and fractional parts. This avoids a subtle bug: for values like
+  // 9.999999995, (abs - floor(abs)).toFixed(8) returns "1.00000000" due to
+  // rounding, which would collapse the fraction while leaving the integer
+  // part at 9 — producing a sort-order-incorrect encoding.
+  const rounded = Number(abs.toFixed(precision));
+  const intPart = Math.floor(rounded).toString().padStart(7, '0');
+  // Now compute the fractional part from the rounded value, which is
+  // guaranteed to be < 1.0 after the integer piece is subtracted.
+  const fracPart = (rounded - Math.floor(rounded))
+    .toFixed(precision)
+    .substring(2);
+  const body = `${intPart}.${fracPart}`;
+
+  if (!isNegative) {
+    return `+${body}`;
+  }
+
+  // Nine's complement of every digit; leave the '.' alone.
+  const complemented = body.replace(/\d/g, (d) => String(9 - parseInt(d, 10)));
+  return `!${complemented}`;
 }
 
 /**
  * Parse a sortable string back to a BrightDate value.
  *
+ * Accepts both the legacy format (v1: '-N' for negatives) and the
+ * current format (v2: '!' + nine's complement). The legacy format is
+ * detected by its leading '-' character and decoded by simple sign
+ * inversion. Stored data from the old scheme remains readable.
+ *
  * @param sortable - Sortable string representation
  * @returns BrightDate value
  */
 export function fromSortableString(sortable: string): BrightDateValue {
-  const sign = sortable[0] === '-' ? -1 : 1;
-  const numStr = sortable.substring(1);
-  return sign * parseFloat(numStr);
+  const prefix = sortable[0];
+  const body = sortable.substring(1);
+
+  if (prefix === '!') {
+    // v2 negative: un-complement then negate
+    const uncomplemented = body.replace(/\d/g, (d) =>
+      String(9 - parseInt(d, 10)),
+    );
+    return -parseFloat(uncomplemented);
+  }
+
+  if (prefix === '-') {
+    // Legacy v1 negative
+    return -parseFloat(body);
+  }
+
+  // '+' prefix (positive or zero)
+  return parseFloat(body);
 }
 
 /**

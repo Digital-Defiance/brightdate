@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   displayName: 'brightdate',
   preset: '../jest.preset.js',
   testEnvironment: 'node',
@@ -6,7 +6,7 @@ export default {
     '^.+\\.[tj]s$': [
       'ts-jest',
       {
-        tsconfig: '<rootDir>/tsconfig.spec.json',
+        tsconfig: './tsconfig.spec.json',
         useESM: true,
       },
     ],
