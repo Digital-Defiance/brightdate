@@ -16,22 +16,47 @@ import type { BrightDateValue } from './types';
 /**
  * Convert a JavaScript Date to a BrightDate value (UTC-based).
  *
+ * Behavior for edge-case inputs:
+ * - Non-Date input (string, number, null, etc.) → throws `TypeError`.
+ * - Invalid Date (e.g. `new Date('bad-string')`) → returns `NaN`. This
+ *   matches the behavior of `Date.getTime()` itself (which returns `NaN`
+ *   for invalid Dates) and avoids breaking callers — particularly
+ *   property-based test generators like fast-check's `fc.date()` — that
+ *   may produce invalid Dates during shrinking. Downstream code should
+ *   treat a `NaN` BrightDate as "invalid input" and reject it at its
+ *   own boundaries, as it would for any `NaN` number.
+ *
+ * Cross-realm safety: `instanceof Date` fails when a Date crosses a
+ * VM realm boundary (e.g. Jest's custom test environments). We therefore
+ * use `Object.prototype.toString.call(v) === '[object Date]'` as the
+ * cross-realm-safe type check.
+ *
  * @param date - JavaScript Date object
- * @returns BrightDate value (decimal days since J2000.0)
- * @throws TypeError if `date` is not a Date instance or is an invalid Date
- *   (NaN time, e.g. `new Date('not-a-date')`).
+ * @returns BrightDate value (decimal days since J2000.0); NaN if `date`
+ *   is an Invalid Date.
+ * @throws TypeError if `date` is not a Date instance.
  */
 export function fromDate(date: Date): BrightDateValue {
-  if (!(date instanceof Date)) {
+  // Cross-realm-safe Date check.
+  // `instanceof Date` fails for Dates that cross VM realm boundaries
+  // (common in Jest custom environments, vm.runInContext, worker threads).
+  // The toString tag is the canonical duck-typed check for built-in types.
+  if (
+    date === null ||
+    typeof date !== 'object' ||
+    Object.prototype.toString.call(date) !== '[object Date]'
+  ) {
     throw new TypeError(
-      `fromDate: expected a Date instance, got ${typeof date}`,
+      `fromDate: expected a Date instance, got ${
+        date === null ? 'null' : typeof date
+      }`,
     );
   }
-  const unixMs = date.getTime();
-  if (isNaN(unixMs)) {
-    throw new TypeError('fromDate: received an invalid Date (NaN time)');
-  }
-  return (unixMs - J2000_UNIX_MS_UTC) / MS_PER_DAY;
+  // Invalid Date -> getTime() returns NaN -> we propagate NaN.
+  // This preserves the standard JavaScript convention that NaN propagates
+  // through arithmetic, making invalid input "loud enough to notice at
+  // the final boundary" without forcing every caller to pre-validate.
+  return (date.getTime() - J2000_UNIX_MS_UTC) / MS_PER_DAY;
 }
 
 /**

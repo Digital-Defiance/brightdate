@@ -162,8 +162,12 @@ describe('hardening', () => {
   // ═══════════════════════════════════════════════════════════════════════
 
   describe('fromDate validation', () => {
-    it('throws TypeError for an invalid Date (NaN time)', () => {
-      expect(() => fromDate(new Date('not-a-date'))).toThrow(TypeError);
+    it('returns NaN for an invalid Date (NaN time), matching Date.getTime() convention', () => {
+      // We deliberately do NOT throw for Invalid Date; we propagate NaN
+      // so that property-test generators (like fc.date() without
+      // noInvalidDate) and similar callers aren't broken. NaN is loud
+      // enough at any downstream comparison boundary.
+      expect(fromDate(new Date('not-a-date'))).toBeNaN();
     });
 
     it('throws TypeError for a non-Date input (runtime type check)', () => {
@@ -182,6 +186,34 @@ describe('hardening', () => {
 
     it('accepts a valid Date (no regression)', () => {
       expect(() => fromDate(new Date('2025-01-01'))).not.toThrow();
+    });
+
+    it('accepts a cross-realm-like Date object (toString tag duck-type)', () => {
+      // Simulate a Date from another VM realm: an object that has
+      // [[Class]] === 'Date' but isn't `instanceof` the current realm's Date.
+      // This is what Jest custom environments, vm.runInContext, and worker
+      // threads produce. We verify our cross-realm-safe check accepts it.
+      const fakeDate = Object.create(Date.prototype);
+      Object.defineProperty(fakeDate, Symbol.toStringTag, { value: 'Date' });
+      // Give it a real getTime
+      fakeDate.getTime = () => 946_728_000_000; // J2000.0
+      // Force Object.prototype.toString.call(fakeDate) === '[object Date]'
+      // by making this a true Date subclass-like object. The cleanest way
+      // to test cross-realm safety without spinning up a vm context is to
+      // set the internal [[Class]] via Symbol.toStringTag. But the
+      // Date-specific slot is not spoofable that way — we'll construct a
+      // real Date and simulate instanceof failure by checking the branch
+      // directly via a vm.runInNewContext Date.
+      const vm = require('vm');
+      const crossRealmDate: Date = vm.runInNewContext(
+        'new Date(946728000000)',
+      );
+      expect(crossRealmDate instanceof Date).toBe(false); // cross-realm!
+      expect(Object.prototype.toString.call(crossRealmDate)).toBe(
+        '[object Date]',
+      );
+      // The whole point: our fromDate must accept this
+      expect(fromDate(crossRealmDate)).toBe(0); // J2000.0 BrightDate
     });
   });
 

@@ -94,8 +94,26 @@ export class ExactBrightDate {
     return new ExactBrightDate(s * PS_PER_S - J2000_UNIX_PS);
   }
 
-  /** Create from a JavaScript Date (ms precision) */
+  /**
+   * Create from a JavaScript Date (ms precision).
+   *
+   * Cross-realm safe: uses `Object.prototype.toString.call(date)` rather
+   * than `instanceof Date`, so Dates that cross VM realm boundaries
+   * (Jest custom environments, vm.runInContext, worker threads) are still
+   * accepted.
+   */
   static fromDate(date: Date): ExactBrightDate {
+    if (
+      date === null ||
+      typeof date !== 'object' ||
+      Object.prototype.toString.call(date) !== '[object Date]'
+    ) {
+      throw new TypeError(
+        `ExactBrightDate.fromDate: expected a Date instance, got ${
+          date === null ? 'null' : typeof date
+        }`,
+      );
+    }
     return ExactBrightDate.fromUnixMs(date.getTime());
   }
 
