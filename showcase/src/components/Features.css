@@ -1,0 +1,118 @@
+.features {
+  background: var(--bg-secondary);
+}
+
+.features-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+.features-card {
+  padding: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.features-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-4px);
+}
+
+.features-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.features-problem {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.features-arrow {
+  color: var(--accent-primary);
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+
+.features-solution {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Precision table */
+.features-precision {
+  text-align: center;
+  padding: 2.5rem;
+  background: rgba(0, 255, 136, 0.04);
+  border: 1px solid rgba(0, 255, 136, 0.15);
+  border-radius: 12px;
+}
+
+.features-precision h3 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  color: var(--accent-primary);
+}
+
+.precision-table-wrap {
+  overflow-x: auto;
+}
+
+.precision-table {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto 1.5rem;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.precision-table th,
+.precision-table td {
+  padding: 0.65rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.precision-table th {
+  color: var(--accent-primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.precision-table td {
+  color: var(--text-secondary);
+}
+
+.mono {
+  font-family: monospace;
+  color: var(--text-primary) !important;
+}
+
+.features-precision-note {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
