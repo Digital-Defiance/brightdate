@@ -1,6 +1,6 @@
 {
   "name": "@brightchain/brightdate",
-  "version": "0.32.3",
+  "version": "0.32.4",
   "description": "BrightDate - A scientifically grounded universal decimal time system based on J2000.0 epoch and TAI",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -52,9 +52,11 @@
   "type": "commonjs",
   "scripts": {
     "build": "tsc -p tsconfig.lib.json",
+    "build:prod": "tsc -b tsconfig.lib.json --force",
     "test": "jest --config jest.config.cts",
     "lint": "eslint 'src/**/*.ts'",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build:prod",
+    "publish:npm": "npm run build:prod && npm publish"
   },
   "publishConfig": {
     "access": "public"
