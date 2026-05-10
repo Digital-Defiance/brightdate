@@ -3,14 +3,19 @@
  * date formats and known holidays for today using date-holidays.
  */
 
-import { fromDate, toJulianDate, toModifiedJulianDate, toUnixMs } from '@brightchain/brightdate';
-import { motion } from 'framer-motion';
-import Holidays from 'date-holidays';
-import { FC, useEffect, useMemo, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { BrightDate } from './BrightDate';
-import { HeroBadge } from './HeroBadge';
-import './DatePage.css';
+import {
+  fromDate,
+  toJulianDate,
+  toModifiedJulianDate,
+  toUnixMs,
+} from "@brightchain/brightdate";
+import { motion } from "framer-motion";
+import Holidays from "date-holidays";
+import { FC, useEffect, useMemo, useState } from "react";
+import { useInView } from "react-intersection-observer";
+import { BrightDate } from "./BrightDate";
+import { HeroBadge } from "./HeroBadge";
+import "./DatePage.css";
 
 // ─── Date Format Helpers ─────────────────────────────────────────────────────
 
@@ -20,7 +25,9 @@ function getDayOfYear(date: Date): number {
 }
 
 function getISOWeek(date: Date): number {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
+  );
   const dayNum = d.getUTCDay() || 7;
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
@@ -45,7 +52,7 @@ function secondsToMillidays(seconds: number): number {
 
 function estimateMarsDistanceKm(date: Date): number {
   const SYNODIC_PERIOD_DAYS = 779.94;
-  const referenceOpposition = new Date('2022-12-08T00:00:00Z');
+  const referenceOpposition = new Date("2022-12-08T00:00:00Z");
   const daysSinceOpposition =
     (date.getTime() - referenceOpposition.getTime()) / (1000 * 60 * 60 * 24);
   const phase = (2 * Math.PI * daysSinceOpposition) / SYNODIC_PERIOD_DAYS;
@@ -58,10 +65,14 @@ function estimateMarsDistanceKm(date: Date): number {
 
 function holidayTypeLabel(type: string): string {
   switch (type) {
-    case 'public': return 'Public';
-    case 'bank': return 'Bank';
-    case 'observance': return 'Observance';
-    default: return 'Observance';
+    case "public":
+      return "Public";
+    case "bank":
+      return "Bank";
+    case "observance":
+      return "Observance";
+    default:
+      return "Observance";
   }
 }
 
@@ -77,7 +88,7 @@ export const DatePage: FC = () => {
   }, []);
 
   const holidays = useMemo(() => {
-    const hd = new Holidays('US', { languages: ['en'] });
+    const hd = new Holidays("US", { languages: ["en"] });
     const result = hd.isHoliday(now);
     if (!result) return [];
     return result;
@@ -95,31 +106,43 @@ export const DatePage: FC = () => {
   // Interplanetary
   const moonLightDelaySec = MOON_DISTANCE_KM / SPEED_OF_LIGHT_KM_S;
   const moonDelayMd = secondsToMillidays(moonLightDelaySec);
-  const marsMinMd = secondsToMillidays(MARS_MIN_DISTANCE_KM / SPEED_OF_LIGHT_KM_S);
-  const marsMaxMd = secondsToMillidays(MARS_MAX_DISTANCE_KM / SPEED_OF_LIGHT_KM_S);
-  const marsCurrentMd = secondsToMillidays(estimateMarsDistanceKm(now) / SPEED_OF_LIGHT_KM_S);
+  const marsMinMd = secondsToMillidays(
+    MARS_MIN_DISTANCE_KM / SPEED_OF_LIGHT_KM_S,
+  );
+  const marsMaxMd = secondsToMillidays(
+    MARS_MAX_DISTANCE_KM / SPEED_OF_LIGHT_KM_S,
+  );
+  const marsCurrentMd = secondsToMillidays(
+    estimateMarsDistanceKm(now) / SPEED_OF_LIGHT_KM_S,
+  );
 
   const formats: Array<{ label: string; value: string }> = [
-    { label: 'BrightDate (full precision)', value: `BD: ${brightValue.toFixed(8)}` },
-    { label: 'BrightDate (standard)', value: `BD: ${brightValue.toFixed(5)}` },
-    { label: 'BrightDate (compact)', value: `BD: ${brightValue.toFixed(3)}` },
-    { label: 'ISO 8601', value: now.toISOString() },
-    { label: 'UTC', value: now.toUTCString() },
-    { label: 'Local Date & Time', value: now.toLocaleString() },
     {
-      label: 'Local Date',
+      label: "BrightDate (full precision)",
+      value: `BD: ${brightValue.toFixed(8)}`,
+    },
+    { label: "BrightDate (standard)", value: `BD: ${brightValue.toFixed(5)}` },
+    { label: "BrightDate (compact)", value: `BD: ${brightValue.toFixed(3)}` },
+    { label: "ISO 8601", value: now.toISOString() },
+    { label: "UTC", value: now.toUTCString() },
+    { label: "Local Date & Time", value: now.toLocaleString() },
+    {
+      label: "Local Date",
       value: now.toLocaleDateString(undefined, {
-        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       }),
     },
-    { label: 'Local Time', value: now.toLocaleTimeString() },
-    { label: 'Unix Timestamp', value: String(unixTs) },
-    { label: 'Unix Milliseconds', value: String(now.getTime()) },
-    { label: 'Julian Date', value: julianDate.toFixed(5) },
-    { label: 'Modified Julian Date', value: mjd.toFixed(5) },
-    { label: 'Day of Year', value: `${dayOfYear} / ${daysInYear}` },
-    { label: 'ISO Week', value: `W${String(isoWeek).padStart(2, '0')}` },
-    { label: 'RFC 2822', value: now.toString() },
+    { label: "Local Time", value: now.toLocaleTimeString() },
+    { label: "Unix Timestamp", value: String(unixTs) },
+    { label: "Unix Milliseconds", value: String(now.getTime()) },
+    { label: "Julian Date", value: julianDate.toFixed(5) },
+    { label: "Modified Julian Date", value: mjd.toFixed(5) },
+    { label: "Day of Year", value: `${dayOfYear} / ${daysInYear}` },
+    { label: "ISO Week", value: `W${String(isoWeek).padStart(2, "0")}` },
+    { label: "RFC 2822", value: now.toString() },
   ];
 
   return (
@@ -146,15 +169,20 @@ export const DatePage: FC = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1, duration: 0.6 }}
         >
-          <p className="datepage-hero-label">BrightDate — decimal days since J2000.0</p>
+          <p className="datepage-hero-label">
+            BrightDate — decimal days since J2000.0
+          </p>
           <div className="datepage-hero-value">
             <BrightDate date={now} interval={0} format="full" />
           </div>
           <p className="datepage-hero-sub">
             {now.toLocaleDateString(undefined, {
-              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+              weekday: "long",
+              year: "numeric",
+              month: "long",
+              day: "numeric",
             })}
-            {' · '}
+            {" · "}
             {now.toLocaleTimeString()}
           </p>
         </motion.div>
@@ -167,7 +195,9 @@ export const DatePage: FC = () => {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
-            <h3 className="datepage-card-title">Today's Holidays & Observances</h3>
+            <h3 className="datepage-card-title">
+              Today's Holidays & Observances
+            </h3>
             <div className="holiday-chips">
               {holidays.map((h) => (
                 <span key={h.name} className={`chip chip-${h.type}`}>
@@ -213,15 +243,18 @@ export const DatePage: FC = () => {
             </a>
           </h3>
           <p className="datepage-text">
-            BrightDate counts decimal days since the J2000.0 epoch (January 1, 2000 at 12:00:00 UTC) —
-            the same epoch used by astronomers worldwide for celestial mechanics.
+            BrightDate counts decimal days since the J2000.0 epoch (January 1,
+            2000 at 12:00:00 UTC) — the same epoch used by astronomers worldwide
+            for celestial mechanics.
           </p>
           <p className="datepage-text">
-            The integer part is the day count. The fractional part is the decimal time of day.
-            For example, 0.5 = noon, 0.25 = 06:00, 0.75 = 18:00.
+            The integer part is the day count. The fractional part is the
+            decimal time of day. For example, 0.5 = noon, 0.25 = 06:00, 0.75 =
+            18:00.
           </p>
           <p className="datepage-text">
-            No time zones, no daylight saving, no ambiguity — just one number on one timeline.
+            No time zones, no daylight saving, no ambiguity — just one number on
+            one timeline.
           </p>
         </motion.div>
 
@@ -232,34 +265,50 @@ export const DatePage: FC = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.35, duration: 0.6 }}
         >
-          <h3 className="datepage-card-title datepage-mono">🛰️ Interplanetary Telemetry</h3>
-          <p className="datepage-text">Current one-way light-delay expressed in millidays (md)</p>
+          <h3 className="datepage-card-title datepage-mono">
+            🛰️ Interplanetary Telemetry
+          </h3>
+          <p className="datepage-text">
+            Current one-way light-delay expressed in millidays (md)
+          </p>
           <dl className="format-grid">
             <div className="format-row">
               <dt className="format-label">Earth → Moon</dt>
-              <dd className="format-value" title={`${moonLightDelaySec.toFixed(2)}s`}>
+              <dd
+                className="format-value"
+                title={`${moonLightDelaySec.toFixed(2)}s`}
+              >
                 {moonDelayMd.toFixed(4)} md
               </dd>
             </div>
             <div className="format-row">
               <dt className="format-label">Earth → Mars (min)</dt>
-              <dd className="format-value" title={`${(MARS_MIN_DISTANCE_KM / SPEED_OF_LIGHT_KM_S).toFixed(1)}s`}>
+              <dd
+                className="format-value"
+                title={`${(MARS_MIN_DISTANCE_KM / SPEED_OF_LIGHT_KM_S).toFixed(1)}s`}
+              >
                 {marsMinMd.toFixed(4)} md
               </dd>
             </div>
             <div className="format-row">
               <dt className="format-label">Earth → Mars (max)</dt>
-              <dd className="format-value" title={`${(MARS_MAX_DISTANCE_KM / SPEED_OF_LIGHT_KM_S).toFixed(1)}s`}>
+              <dd
+                className="format-value"
+                title={`${(MARS_MAX_DISTANCE_KM / SPEED_OF_LIGHT_KM_S).toFixed(1)}s`}
+              >
                 {marsMaxMd.toFixed(4)} md
               </dd>
             </div>
             <div className="format-row">
               <dt className="format-label">Earth → Mars (current est.)</dt>
-              <dd className="format-value format-value--accent">{marsCurrentMd.toFixed(4)} md</dd>
+              <dd className="format-value format-value--accent">
+                {marsCurrentMd.toFixed(4)} md
+              </dd>
             </div>
           </dl>
           <p className="datepage-caption">
-            BrightDate is designed for a world beyond Earth-Standard Time. One milliday ≈ 86.4 seconds.
+            BrightDate is designed for a world beyond Earth-Standard Time. One
+            milliday ≈ 86.4 seconds.
           </p>
         </motion.div>
       </motion.div>

@@ -9,7 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@brightchain/brightdate": fileURLToPath(
-        new URL("../src/index.ts", import.meta.url)
+        new URL("../src/index.ts", import.meta.url),
       ),
     },
   },
