@@ -1,6 +1,5 @@
 module.exports = {
   displayName: 'brightdate',
-  preset: '../jest.preset.js',
   testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': [
@@ -11,7 +10,9 @@ module.exports = {
       },
     ],
   },
+  testMatch: ['**/__tests__/**/*.ts', '**/*.spec.ts', '**/*.test.ts'],
   moduleFileExtensions: ['ts', 'js', 'html'],
-  coverageDirectory: '../coverage/brightdate',
+  coverageDirectory: './coverage',
   extensionsToTreatAsEsm: ['.ts'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 };
