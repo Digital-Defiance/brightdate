@@ -1,4 +1,4 @@
-import { fromDate } from "@brightchain/brightdate";
+import { fromDate, toDate } from "@brightchain/brightdate";
 import { FC, useEffect, useMemo, useState } from "react";
 
 export interface BrightDateProps {
@@ -34,10 +34,8 @@ export const BrightDate: FC<BrightDateProps> = ({
 
   const resolvedDate = useMemo(() => {
     if (value !== undefined) {
-      // Convert BrightDate value (decimal days since J2000.0) to a JS Date
-      const J2000_UNIX_MS = 946_728_000_000;
-      const MS_PER_DAY = 86_400_000;
-      return new Date(J2000_UNIX_MS + value * MS_PER_DAY);
+      // Convert BrightDate value (decimal days since J2000.0 TAI anchor) to a JS Date
+      return toDate(value);
     }
     return date;
   }, [value, date]);

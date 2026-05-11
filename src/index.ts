@@ -35,13 +35,14 @@
  */
 
 // ─── Core Class ────────────────────────────────────────────────────────────────
-export { BrightDate } from './BrightDate';
+export { BrightDate } from "./BrightDate";
 
 // ─── Exact (BigInt-based) Companion ────────────────────────────────────────────
-export { ExactBrightDate } from './ExactBrightDate';
+export { ExactBrightDate } from "./ExactBrightDate";
+export { BrightInstant } from "./BrightInstant";
 
 // ─── Intervals ─────────────────────────────────────────────────────────────────
-export { BrightDateInterval } from './intervals';
+export { BrightDateInterval } from "./intervals";
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 export type {
@@ -51,13 +52,19 @@ export type {
   BrightDuration,
   FormattedBrightDate,
   Precision,
-} from './types';
+} from "./types";
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 export {
   CURRENT_TAI_UTC_OFFSET,
   DEFAULT_PRECISION,
+  GPS_EPOCH_UNIX_TAI,
+  J2000_JD,
+  J2000_MJD,
+  J2000_TAI_UNIX_S,
+  J2000_TT_UNIX_S,
   J2000_UNIX_MS_UTC,
+  J2000_UTC_UNIX_MS,
   LEAP_SECOND_TABLE,
   LEAP_SECOND_TABLE_REVIEWED_AT,
   LEAP_SECOND_TABLE_SOURCE,
@@ -68,7 +75,7 @@ export {
   SECONDS_PER_DAY,
   TAI_UTC_OFFSET_AT_J2000,
   TT_TAI_OFFSET_SECONDS,
-} from './constants';
+} from "./constants";
 
 // ─── Conversions ───────────────────────────────────────────────────────────────
 export {
@@ -92,7 +99,7 @@ export {
   toUnixMs,
   toUnixSeconds,
   utcToTaiBrightDate,
-} from './conversions';
+} from "./conversions";
 
 // ─── Formatting ────────────────────────────────────────────────────────────────
 export {
@@ -106,7 +113,7 @@ export {
   formatRange,
   hmsToDayFraction,
   toDuration,
-} from './formatting';
+} from "./formatting";
 
 // ─── Arithmetic ────────────────────────────────────────────────────────────────
 export {
@@ -132,7 +139,7 @@ export {
   sortComparator,
   subtract,
   wholeDaysBetween,
-} from './arithmetic';
+} from "./arithmetic";
 
 // ─── Leap Seconds ──────────────────────────────────────────────────────────────
 export {
@@ -141,8 +148,10 @@ export {
   isDuringLeapSecond,
   leapSecondsBetween,
   taiToUtc,
+  taiToUtcFull,
   utcToTai,
-} from './leapSeconds';
+} from "./leapSeconds";
+export type { TaiToUtcResult } from "./leapSeconds";
 
 // ─── Validation ────────────────────────────────────────────────────────────────
 export {
@@ -156,7 +165,7 @@ export {
   validateJulianDate,
   validatePrecision,
   validateUnixMs,
-} from './validation';
+} from "./validation";
 
 // ─── Serialization ─────────────────────────────────────────────────────────────
 export {
@@ -172,8 +181,8 @@ export {
   toBinary,
   toHttpHeader,
   toSortableString,
-} from './serialization';
-export type { SerializedBrightDate } from './serialization';
+} from "./serialization";
+export type { SerializedBrightDate } from "./serialization";
 
 // ─── Timezones ─────────────────────────────────────────────────────────────────
 export {
@@ -188,7 +197,7 @@ export {
   localTimeOfDay,
   toLocalValue,
   toSystemLocal,
-} from './timezones';
+} from "./timezones";
 
 // ─── Calendar ──────────────────────────────────────────────────────────────────
 export {
@@ -209,7 +218,7 @@ export {
   startOfYear,
   toCalendar,
   yearInterval,
-} from './calendar';
+} from "./calendar";
 
 // ─── Astronomy ─────────────────────────────────────────────────────────────────
 export {
@@ -224,7 +233,7 @@ export {
   marsLightDelay,
   solarDeclination,
   solarLongitude,
-} from './astronomy';
+} from "./astronomy";
 
 // ─── Interplanetary ────────────────────────────────────────────────────────────
 export {
@@ -241,8 +250,8 @@ export {
   signalArrivalTime,
   signalSendTime,
   toMarsSolDate,
-} from './interplanetary';
-export type { SolarSystemBody } from './interplanetary';
+} from "./interplanetary";
+export type { SolarSystemBody } from "./interplanetary";
 
 // ─── Logging ───────────────────────────────────────────────────────────────────
 export {
@@ -253,8 +262,8 @@ export {
   measure,
   measureAsync,
   toFilenameTimestamp,
-} from './logging';
-export type { BrightDateLogEntry, LogLevel } from './logging';
+} from "./logging";
+export type { BrightDateLogEntry, LogLevel } from "./logging";
 
 // ─── Scheduling ────────────────────────────────────────────────────────────────
 export {
@@ -265,8 +274,8 @@ export {
   previousOccurrenceBefore,
   recurrences,
   timeUntilDailyEvent,
-} from './scheduling';
-export type { RecurrencePattern, ScheduledEvent } from './scheduling';
+} from "./scheduling";
+export type { RecurrencePattern, ScheduledEvent } from "./scheduling";
 
 // ─── Comparisons ───────────────────────────────────────────────────────────────
 export {
@@ -280,4 +289,4 @@ export {
   partition,
   statistics,
   within,
-} from './comparisons';
+} from "./comparisons";

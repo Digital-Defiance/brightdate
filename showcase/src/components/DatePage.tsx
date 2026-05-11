@@ -4,6 +4,7 @@
  */
 
 import {
+  BrightInstant,
   fromDate,
   toJulianDate,
   toModifiedJulianDate,
@@ -103,6 +104,16 @@ export const DatePage: FC = () => {
   const isoWeek = getISOWeek(now);
   const daysInYear = isLeapYear(now.getFullYear()) ? 366 : 365;
 
+  // BrightInstant — exact TAI substrate (integer seconds + nanos since J2000.0)
+  const instant = BrightInstant.fromUnixMs(now.getTime());
+  const taiSecondsSinceJ2000 = instant.taiSecondsSinceJ2000.toString();
+  // TAI Unix seconds = J2000.0 TAI anchor (946_727_967) + seconds since J2000.0.
+  // This visibly differs from Unix time by the accumulated leap-second offset.
+  const taiUnixSeconds = (
+    946_727_967n + instant.taiSecondsSinceJ2000
+  ).toString();
+  const leapOffset = Number(BigInt(taiUnixSeconds) - BigInt(unixTs));
+
   // Interplanetary
   const moonLightDelaySec = MOON_DISTANCE_KM / SPEED_OF_LIGHT_KM_S;
   const moonDelayMd = secondsToMillidays(moonLightDelaySec);
@@ -140,6 +151,14 @@ export const DatePage: FC = () => {
     { label: "Unix Milliseconds", value: String(now.getTime()) },
     { label: "Julian Date", value: julianDate.toFixed(5) },
     { label: "Modified Julian Date", value: mjd.toFixed(5) },
+    {
+      label: "BrightInstant (TAI seconds since J2000.0)",
+      value: taiSecondsSinceJ2000,
+    },
+    {
+      label: "TAI Unix Seconds",
+      value: `${taiUnixSeconds}  (Unix + ${leapOffset} leap s)`,
+    },
     { label: "Day of Year", value: `${dayOfYear} / ${daysInYear}` },
     { label: "ISO Week", value: `W${String(isoWeek).padStart(2, "0")}` },
     { label: "RFC 2822", value: now.toString() },
@@ -243,9 +262,12 @@ export const DatePage: FC = () => {
             </a>
           </h3>
           <p className="datepage-text">
-            BrightDate counts decimal days since the J2000.0 epoch (January 1,
-            2000 at 12:00:00 UTC) — the same epoch used by astronomers worldwide
-            for celestial mechanics.
+            BrightDate counts decimal days since the J2000.0 epoch — the
+            standard astronomical epoch anchored at 2000-01-01T11:58:55.816Z
+            (UTC). The same epoch is used by every modern observatory, space
+            agency, and ephemeris. BrightDate ticks in strict SI seconds via a
+            TAI substrate, so leap seconds only appear at UTC boundaries and
+            never disturb the timeline.
           </p>
           <p className="datepage-text">
             The integer part is the day count. The fractional part is the

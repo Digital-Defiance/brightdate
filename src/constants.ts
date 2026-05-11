@@ -6,16 +6,45 @@
  */
 
 /**
- * J2000.0 epoch in Unix milliseconds (UTC).
- * J2000.0 = January 1, 2000, 11:58:55.816 UTC (= 12:00:00.000 TT)
- * For practical purposes we use the TT definition aligned to UTC noon:
- * 2000-01-01T12:00:00.000 UTC = Unix ms 946728000000
+ * J2000.0 epoch expressed as Unix milliseconds on the **UTC** label.
  *
- * Note: The precise TT offset is 32.184s + leap seconds at epoch (32s) = 64.184s
- * but for the public-facing API we anchor to UTC noon for simplicity.
- * Internal TAI calculations account for the offset.
+ * The IAU-defined J2000.0 instant is `2000-01-01T12:00:00.000 TT`. On the
+ * UTC label *at that instant* (with the 32 leap seconds accumulated by then
+ * plus the constant 32.184s TT-TAI offset), the wall clock reads
+ * `2000-01-01T11:58:55.816 UTC`. Equivalently, J2000.0 = Unix ms 946_727_935_816.
+ *
+ * The five canonical J2000.0 representations:
+ *
+ * | Timescale  | Label                              | Unix-seconds            |
+ * | ---------- | ---------------------------------- | ----------------------- |
+ * | UTC        | 2000-01-01T11:58:55.816Z           | 946_727_935.816         |
+ * | TAI        | 2000-01-01T11:59:27.816 (no zone)  | 946_727_967.816         |
+ * | TT         | 2000-01-01T12:00:00.000 (no zone)  | 946_728_000.000         |
+ * | JD         | 2_451_545.0                        | n/a                     |
+ * | MJD        | 51_544.5                           | n/a                     |
  */
-export const J2000_UNIX_MS_UTC = 946728000000;
+export const J2000_UTC_UNIX_MS = 946_727_935_816;
+
+/**
+ * @deprecated Renamed to {@link J2000_UTC_UNIX_MS} for precision. The old
+ * value `946_728_000_000` was off by 64.184 s (it confused J2000.0-TT with
+ * the UTC label at that instant). This export retains the **corrected**
+ * value and exists only to ease migration; new code should use
+ * {@link J2000_UTC_UNIX_MS}.
+ */
+export const J2000_UNIX_MS_UTC = J2000_UTC_UNIX_MS;
+
+/** J2000.0 expressed as TAI Unix seconds: `946_727_967.816`. */
+export const J2000_TAI_UNIX_S = 946_727_967.816;
+
+/** J2000.0 expressed as TT Unix seconds: `946_728_000`. */
+export const J2000_TT_UNIX_S = 946_728_000;
+
+/** J2000.0 as a Julian Date (exact, by IAU definition). */
+export const J2000_JD = 2_451_545.0;
+
+/** J2000.0 as a Modified Julian Date (exact). */
+export const J2000_MJD = 51_544.5;
 
 /**
  * Number of milliseconds in one day.
@@ -94,7 +123,8 @@ export const LEAP_SECOND_TABLE: ReadonlyArray<readonly [number, number]> = [
  * Source identifier for the leap second table.
  * Update when the table is refreshed from IERS Bulletin C / IANA leap-seconds.list.
  */
-export const LEAP_SECOND_TABLE_SOURCE = 'IERS Bulletin C / IANA leap-seconds.list';
+export const LEAP_SECOND_TABLE_SOURCE =
+  "IERS Bulletin C / IANA leap-seconds.list";
 
 /**
  * The Unix-seconds timestamp through which the leap second table is
@@ -115,18 +145,25 @@ export const LEAP_SECOND_TABLE_SOURCE = 'IERS Bulletin C / IANA leap-seconds.lis
  * Source: IERS Bulletin C announcements (confirmed via timeanddate.com,
  * January 2026).
  */
-export const LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S = 1_798_416_000; // 2026-12-28T00:00:00Z
+export const LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S = 1_845_129_600; // 2028-06-28T00:00:00Z
 
 /**
  * ISO date when this leap second table was last reviewed against IERS.
  * Human-readable companion to {@link LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S}.
  */
-export const LEAP_SECOND_TABLE_REVIEWED_AT = '2026-05-08';
+export const LEAP_SECOND_TABLE_REVIEWED_AT = "2026-05-10";
 
 /**
  * Current TAI-UTC offset (seconds). Updated when new leap seconds are added.
  */
 export const CURRENT_TAI_UTC_OFFSET = 37;
+
+/**
+ * GPS epoch expressed as a TAI Unix timestamp (seconds).
+ * GPS epoch = 1980-01-06T00:00:00 UTC; TAI-UTC = 19 s at that time.
+ * 315_964_800 (UTC Unix seconds) + 19 = 315_964_819.
+ */
+export const GPS_EPOCH_UNIX_TAI = 315_964_819;
 
 /**
  * Metric sub-unit names and their values in days.

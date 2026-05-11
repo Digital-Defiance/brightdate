@@ -11,7 +11,7 @@
  * If any fails, the library's claims are weakened.
  */
 
-import * as fc from 'fast-check';
+import * as fc from "fast-check";
 import {
   absoluteDifference,
   add,
@@ -25,9 +25,9 @@ import {
   midpoint,
   min,
   subtract,
-} from '../arithmetic';
-import { BrightDate } from '../BrightDate';
-import { J2000_UNIX_MS_UTC, MS_PER_DAY } from '../constants';
+} from "../arithmetic";
+import { BrightDate } from "../BrightDate";
+import { J2000_UNIX_MS_UTC, MS_PER_DAY } from "../constants";
 import {
   fromDate,
   fromJulianDate,
@@ -37,10 +37,10 @@ import {
   toJulianDate,
   toModifiedJulianDate,
   toUnixMs,
-} from '../conversions';
-import { ExactBrightDate } from '../ExactBrightDate';
-import { BrightDateInterval } from '../intervals';
-import { getTaiUtcOffset, utcToTai } from '../leapSeconds';
+} from "../conversions";
+import { ExactBrightDate } from "../ExactBrightDate";
+import { BrightDateInterval } from "../intervals";
+import { getTaiUtcOffset, utcToTai } from "../leapSeconds";
 import {
   decode,
   encode,
@@ -48,7 +48,7 @@ import {
   fromSortableString,
   toBinary,
   toSortableString,
-} from '../serialization';
+} from "../serialization";
 
 // ─── Arbitraries ──────────────────────────────────────────────────────────
 
@@ -115,7 +115,7 @@ const picosecondBigInt = (): fc.Arbitrary<bigint> =>
     max: 2n ** 80n,
   });
 
-describe('Property-Based Tests', () => {
+describe("Property-Based Tests", () => {
   // The property tests intentionally probe timestamps far into the future
   // (up to ~year 2100) to verify invariants like TAI monotonicity across
   // the whole timeline. Those queries pass our LEAP_SECOND_TABLE_VALID_UNTIL
@@ -124,7 +124,7 @@ describe('Property-Based Tests', () => {
   // dedicated tests in hardening.spec.ts.
   let warnSpy: jest.SpyInstance;
   beforeAll(() => {
-    warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    warnSpy = jest.spyOn(console, "warn").mockImplementation(() => undefined);
   });
   afterAll(() => {
     warnSpy.mockRestore();
@@ -134,8 +134,8 @@ describe('Property-Based Tests', () => {
   // ARITHMETIC PROPERTIES
   // ═══════════════════════════════════════════════════════════════════════
 
-  describe('arithmetic', () => {
-    it('add(v, d) === subtract(v, -d) for all v, d', () => {
+  describe("arithmetic", () => {
+    it("add(v, d) === subtract(v, -d) for all v, d", () => {
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (v, d) => {
           return add(v, d) === subtract(v, -d);
@@ -143,19 +143,17 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('add(v, 0) === v for all v (additive identity)', () => {
-      fc.assert(
-        fc.property(realisticBrightDate(), (v) => add(v, 0) === v),
-      );
+    it("add(v, 0) === v for all v (additive identity)", () => {
+      fc.assert(fc.property(realisticBrightDate(), (v) => add(v, 0) === v));
     });
 
-    it('subtract(v, 0) === v for all v', () => {
+    it("subtract(v, 0) === v for all v", () => {
       fc.assert(
         fc.property(realisticBrightDate(), (v) => subtract(v, 0) === v),
       );
     });
 
-    it('addMillidays(v, 1000) ≈ add(v, 1) within 1 ULP', () => {
+    it("addMillidays(v, 1000) ≈ add(v, 1) within 1 ULP", () => {
       fc.assert(
         fc.property(nearEpochBrightDate(), (v) => {
           const viaMilli = addMillidays(v, 1000);
@@ -166,7 +164,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('addMicrodays(v, 1_000_000) ≈ add(v, 1) within 2 ULP', () => {
+    it("addMicrodays(v, 1_000_000) ≈ add(v, 1) within 2 ULP", () => {
       fc.assert(
         fc.property(nearEpochBrightDate(), (v) => {
           const viaMicro = addMicrodays(v, 1_000_000);
@@ -177,7 +175,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('absoluteDifference is symmetric: |a-b| === |b-a|', () => {
+    it("absoluteDifference is symmetric: |a-b| === |b-a|", () => {
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (a, b) => {
           return absoluteDifference(a, b) === absoluteDifference(b, a);
@@ -185,7 +183,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('compare is consistent: compare(a,b) + compare(b,a) === 0', () => {
+    it("compare is consistent: compare(a,b) + compare(b,a) === 0", () => {
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (a, b) => {
           return compare(a, b) + compare(b, a) === 0;
@@ -193,13 +191,11 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('compare(a, a) === 0 (reflexivity) for all a', () => {
-      fc.assert(
-        fc.property(realisticBrightDate(), (a) => compare(a, a) === 0),
-      );
+    it("compare(a, a) === 0 (reflexivity) for all a", () => {
+      fc.assert(fc.property(realisticBrightDate(), (a) => compare(a, a) === 0));
     });
 
-    it('clamp(v, lo, hi) ∈ [lo, hi] whenever lo ≤ hi', () => {
+    it("clamp(v, lo, hi) ∈ [lo, hi] whenever lo ≤ hi", () => {
       fc.assert(
         fc.property(
           realisticBrightDate(),
@@ -215,7 +211,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('clamp(v, lo, hi) === v whenever v ∈ [lo, hi]', () => {
+    it("clamp(v, lo, hi) === v whenever v ∈ [lo, hi]", () => {
       fc.assert(
         fc.property(
           realisticBrightDate(),
@@ -231,7 +227,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('lerp endpoints: lerp(a, b, 0) === a exactly', () => {
+    it("lerp endpoints: lerp(a, b, 0) === a exactly", () => {
       // (b-a)*0 is always +0 (or -0), so addition with a is exact.
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (a, b) => {
@@ -240,7 +236,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('lerp endpoints: lerp(a, b, 1) is within a few ULP of b', () => {
+    it("lerp endpoints: lerp(a, b, 1) is within a few ULP of b", () => {
       // The formula `a + (b-a)*t` is the standard lerp. At t=1 it reduces
       // to `a + (b-a)`, which equals b ONLY when the subtraction (b-a)
       // is exact — not guaranteed. The ULP bound is scaled by
@@ -257,7 +253,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('midpoint(a, b) === midpoint(b, a) (commutative)', () => {
+    it("midpoint(a, b) === midpoint(b, a) (commutative)", () => {
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (a, b) => {
           return midpoint(a, b) === midpoint(b, a);
@@ -265,7 +261,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('min/max are consistent: min ≤ max', () => {
+    it("min/max are consistent: min ≤ max", () => {
       fc.assert(
         fc.property(
           fc.array(realisticBrightDate(), { minLength: 1, maxLength: 100 }),
@@ -274,13 +270,11 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('floorToDay(v) ≤ v', () => {
-      fc.assert(
-        fc.property(realisticBrightDate(), (v) => floorToDay(v) <= v),
-      );
+    it("floorToDay(v) ≤ v", () => {
+      fc.assert(fc.property(realisticBrightDate(), (v) => floorToDay(v) <= v));
     });
 
-    it('floorToDay(v) + 1 > v (floor is the correct step)', () => {
+    it("floorToDay(v) + 1 > v (floor is the correct step)", () => {
       fc.assert(
         fc.property(realisticBrightDate(), (v) => floorToDay(v) + 1 > v),
       );
@@ -291,14 +285,17 @@ describe('Property-Based Tests', () => {
   // CONVERSION ROUND-TRIP PROPERTIES
   // ═══════════════════════════════════════════════════════════════════════
 
-  describe('conversion round-trips', () => {
-    it('day-aligned Unix ms → BrightDate → Unix ms is bit-exact', () => {
+  describe("conversion round-trips", () => {
+    it("day-aligned Unix ms → BrightDate → Unix ms is bit-exact", () => {
       fc.assert(
-        fc.property(dayAlignedUnixMs(), (ms) => toUnixMs(fromUnixMs(ms)) === ms),
+        fc.property(
+          dayAlignedUnixMs(),
+          (ms) => toUnixMs(fromUnixMs(ms)) === ms,
+        ),
       );
     });
 
-    it('arbitrary Unix ms round-trip error is bounded by 1 ms', () => {
+    it("arbitrary Unix ms round-trip error is bounded by 1 ms", () => {
       fc.assert(
         fc.property(integerUnixMs(), (ms) => {
           return Math.abs(toUnixMs(fromUnixMs(ms)) - ms) < 1;
@@ -306,20 +303,18 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('BrightDate → Date → BrightDate preserves ms quantization', () => {
+    it("BrightDate → Date → BrightDate is idempotent (ms-quantized projection)", () => {
       fc.assert(
         fc.property(realisticBrightDate(), (v) => {
-          const d = toDate(v);
-          const v2 = fromDate(d);
-          // JavaScript Date truncates fractional milliseconds toward zero.
-          // The round-trip value is therefore `(trunc(v*MS + J) - J) / MS`.
-          const expectedMs = Math.trunc(v * MS_PER_DAY + J2000_UNIX_MS_UTC);
-          return v2 === (expectedMs - J2000_UNIX_MS_UTC) / MS_PER_DAY;
+          // Project onto the UTC millisecond grid (Date resolution).
+          const v2 = fromDate(toDate(v));
+          // A second projection must return the same value (idempotency).
+          return fromDate(toDate(v2)) === v2;
         }),
       );
     });
 
-    it('Julian Date round-trip: toJulianDate(fromJulianDate(jd)) === jd', () => {
+    it("Julian Date round-trip: toJulianDate(fromJulianDate(jd)) === jd", () => {
       fc.assert(
         fc.property(
           fc.double({
@@ -333,7 +328,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('Modified Julian Date round-trip', () => {
+    it("Modified Julian Date round-trip", () => {
       fc.assert(
         fc.property(
           fc.double({
@@ -352,8 +347,8 @@ describe('Property-Based Tests', () => {
   // SERIALIZATION PROPERTIES
   // ═══════════════════════════════════════════════════════════════════════
 
-  describe('serialization', () => {
-    it('toBinary → fromBinary is bit-exact (Object.is) for all finite Float64', () => {
+  describe("serialization", () => {
+    it("toBinary → fromBinary is bit-exact (Object.is) for all finite Float64", () => {
       fc.assert(
         fc.property(realisticBrightDate(), (v) => {
           return Object.is(fromBinary(toBinary(v)), v);
@@ -361,7 +356,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('encode → decode preserves value at precision 12 (for values ≥ 1e-12)', () => {
+    it("encode → decode preserves value at precision 12 (for values ≥ 1e-12)", () => {
       // encode uses toFixed(precision), which cannot represent magnitudes
       // below 10^-precision. At precision 12, values smaller than ~1e-12
       // days (~86 picoseconds) are truncated to zero. For a Float64 input
@@ -370,7 +365,7 @@ describe('Property-Based Tests', () => {
       fc.assert(
         fc.property(
           nearEpochBrightDate().filter((v) => v === 0 || Math.abs(v) >= 1e-12),
-          fc.constantFrom('utc', 'tai') as fc.Arbitrary<'utc' | 'tai'>,
+          fc.constantFrom("utc", "tai") as fc.Arbitrary<"utc" | "tai">,
           (v, ts) => {
             const encoded = encode(v, ts, 12);
             const { value, timescale } = decode(encoded);
@@ -381,16 +376,14 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('toSortableString is order-preserving under lexicographic sort (for values ≥ 1e-8)', () => {
+    it("toSortableString is order-preserving under lexicographic sort (for values ≥ 1e-8)", () => {
       // Sortable strings use toFixed(8), so magnitudes below ~1e-8 days
       // (~0.86 ms) get truncated to zero. Above this threshold, the
       // lexicographic ordering matches numeric ordering.
       fc.assert(
         fc.property(
           fc.array(
-            nearEpochBrightDate().filter(
-              (v) => v === 0 || Math.abs(v) >= 1e-8,
-            ),
+            nearEpochBrightDate().filter((v) => v === 0 || Math.abs(v) >= 1e-8),
             { minLength: 2, maxLength: 20 },
           ),
           (values) => {
@@ -412,13 +405,13 @@ describe('Property-Based Tests', () => {
   // INTERVAL PROPERTIES
   // ═══════════════════════════════════════════════════════════════════════
 
-  describe('intervals', () => {
+  describe("intervals", () => {
     const orderedPair = (): fc.Arbitrary<[number, number]> =>
       fc
         .tuple(realisticBrightDate(), realisticBrightDate())
         .map(([a, b]) => [Math.min(a, b), Math.max(a, b)] as [number, number]);
 
-    it('interval duration is non-negative', () => {
+    it("interval duration is non-negative", () => {
       fc.assert(
         fc.property(orderedPair(), ([s, e]) => {
           return BrightDateInterval.fromValues(s, e).duration >= 0;
@@ -426,7 +419,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('midpoint is inside the interval', () => {
+    it("midpoint is inside the interval", () => {
       fc.assert(
         fc.property(orderedPair(), ([s, e]) => {
           const interval = BrightDateInterval.fromValues(s, e);
@@ -436,7 +429,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('contains(start) and contains(end) are both true', () => {
+    it("contains(start) and contains(end) are both true", () => {
       fc.assert(
         fc.property(orderedPair(), ([s, e]) => {
           const interval = BrightDateInterval.fromValues(s, e);
@@ -445,7 +438,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('expand(d).shrink(d) yields the original interval (when valid)', () => {
+    it("expand(d).shrink(d) yields the original interval (when valid)", () => {
       fc.assert(
         fc.property(
           orderedPair(),
@@ -469,7 +462,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('shift preserves duration', () => {
+    it("shift preserves duration", () => {
       fc.assert(
         fc.property(
           orderedPair(),
@@ -488,7 +481,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('split(n) sub-intervals sum to the original duration', () => {
+    it("split(n) sub-intervals sum to the original duration", () => {
       fc.assert(
         fc.property(
           orderedPair(),
@@ -496,10 +489,7 @@ describe('Property-Based Tests', () => {
           ([s, e], n) => {
             const interval = BrightDateInterval.fromValues(s, e);
             const parts = interval.split(n);
-            const totalDuration = parts.reduce(
-              (sum, p) => sum + p.duration,
-              0,
-            );
+            const totalDuration = parts.reduce((sum, p) => sum + p.duration, 0);
             // Allow small ULP accumulation
             const tolerance = Math.max(Math.abs(interval.duration), 1) * 1e-10;
             return Math.abs(totalDuration - interval.duration) <= tolerance;
@@ -513,28 +503,22 @@ describe('Property-Based Tests', () => {
   // LEAP SECOND PROPERTIES
   // ═══════════════════════════════════════════════════════════════════════
 
-  describe('leap seconds', () => {
-    it('TAI is always ≥ UTC', () => {
+  describe("leap seconds", () => {
+    it("TAI is always ≥ UTC", () => {
+      fc.assert(fc.property(integerUnixSeconds(), (s) => utcToTai(s) >= s));
+    });
+
+    it("TAI-UTC offset is monotonically non-decreasing in time", () => {
       fc.assert(
-        fc.property(integerUnixSeconds(), (s) => utcToTai(s) >= s),
+        fc.property(integerUnixSeconds(), integerUnixSeconds(), (a, b) => {
+          const earlier = Math.min(a, b);
+          const later = Math.max(a, b);
+          return getTaiUtcOffset(later) >= getTaiUtcOffset(earlier);
+        }),
       );
     });
 
-    it('TAI-UTC offset is monotonically non-decreasing in time', () => {
-      fc.assert(
-        fc.property(
-          integerUnixSeconds(),
-          integerUnixSeconds(),
-          (a, b) => {
-            const earlier = Math.min(a, b);
-            const later = Math.max(a, b);
-            return getTaiUtcOffset(later) >= getTaiUtcOffset(earlier);
-          },
-        ),
-      );
-    });
-
-    it('utcToTai is strictly monotonic (no stuttering)', () => {
+    it("utcToTai is strictly monotonic (no stuttering)", () => {
       fc.assert(
         fc.property(
           integerUnixSeconds(),
@@ -549,18 +533,18 @@ describe('Property-Based Tests', () => {
   // BRIGHTDATE CLASS PROPERTIES
   // ═══════════════════════════════════════════════════════════════════════
 
-  describe('BrightDate class', () => {
-    it('valueOf() enables correct numeric comparison', () => {
+  describe("BrightDate class", () => {
+    it("valueOf() enables correct numeric comparison", () => {
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (a, b) => {
           const bdA = BrightDate.fromValue(a);
           const bdB = BrightDate.fromValue(b);
-          return (bdA < bdB) === (a < b) && (bdA > bdB) === (a > b);
+          return bdA < bdB === a < b && bdA > bdB === a > b;
         }),
       );
     });
 
-    it('addDays + subtractDays is identity (within a few ULP)', () => {
+    it("addDays + subtractDays is identity (within a few ULP)", () => {
       // Strict equality fails when (v+d)-d rounds back differently. The
       // ULP bound scales with max(|v|, |d|) because the intermediate
       // value (v+d) has that magnitude.
@@ -587,7 +571,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('isBefore is asymmetric: !(a.isBefore(b) && b.isBefore(a))', () => {
+    it("isBefore is asymmetric: !(a.isBefore(b) && b.isBefore(a))", () => {
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (a, b) => {
           const bdA = BrightDate.fromValue(a);
@@ -597,7 +581,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('midpoint is between this and other', () => {
+    it("midpoint is between this and other", () => {
       fc.assert(
         fc.property(realisticBrightDate(), realisticBrightDate(), (a, b) => {
           const bdA = BrightDate.fromValue(a);
@@ -615,8 +599,8 @@ describe('Property-Based Tests', () => {
   // EXACT BRIGHTDATE PROPERTIES (bit-exact)
   // ═══════════════════════════════════════════════════════════════════════
 
-  describe('ExactBrightDate', () => {
-    it('Unix ms round-trip is ALWAYS bit-exact', () => {
+  describe("ExactBrightDate", () => {
+    it("Unix ms round-trip is ALWAYS bit-exact", () => {
       fc.assert(
         fc.property(integerUnixMs(), (ms) => {
           return ExactBrightDate.fromUnixMs(ms).toUnixMs() === ms;
@@ -624,7 +608,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('fromPicoseconds → picoseconds is identity', () => {
+    it("fromPicoseconds → picoseconds is identity", () => {
       fc.assert(
         fc.property(picosecondBigInt(), (ps) => {
           return ExactBrightDate.fromPicoseconds(ps).picoseconds === ps;
@@ -632,7 +616,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('addPicoseconds is exactly reversible', () => {
+    it("addPicoseconds is exactly reversible", () => {
       fc.assert(
         fc.property(picosecondBigInt(), picosecondBigInt(), (a, b) => {
           const e = ExactBrightDate.fromPicoseconds(a);
@@ -641,18 +625,16 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('toBinary → fromBinary is bit-exact', () => {
+    it("toBinary → fromBinary is bit-exact", () => {
       fc.assert(
         fc.property(picosecondBigInt(), (ps) => {
           const e = ExactBrightDate.fromPicoseconds(ps);
-          return (
-            ExactBrightDate.fromBinary(e.toBinary()).picoseconds === ps
-          );
+          return ExactBrightDate.fromBinary(e.toBinary()).picoseconds === ps;
         }),
       );
     });
 
-    it('encode → decode is bit-exact', () => {
+    it("encode → decode is bit-exact", () => {
       fc.assert(
         fc.property(picosecondBigInt(), (ps) => {
           const e = ExactBrightDate.fromPicoseconds(ps);
@@ -661,7 +643,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('compareTo is a total order consistent with subtraction', () => {
+    it("compareTo is a total order consistent with subtraction", () => {
       fc.assert(
         fc.property(picosecondBigInt(), picosecondBigInt(), (a, b) => {
           const ea = ExactBrightDate.fromPicoseconds(a);
@@ -674,7 +656,7 @@ describe('Property-Based Tests', () => {
       );
     });
 
-    it('differencePicoseconds equals the arithmetic difference', () => {
+    it("differencePicoseconds equals the arithmetic difference", () => {
       fc.assert(
         fc.property(picosecondBigInt(), picosecondBigInt(), (a, b) => {
           const ea = ExactBrightDate.fromPicoseconds(a);

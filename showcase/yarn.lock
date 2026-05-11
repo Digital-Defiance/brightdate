@@ -209,12 +209,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@brightchain/brightdate@npm:^0.32.3":
-  version: 0.32.3
-  resolution: "@brightchain/brightdate@npm:0.32.3"
+"@brightchain/brightdate@npm:^0.32.5":
+  version: 0.32.5
+  resolution: "@brightchain/brightdate@npm:0.32.5"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10c0/7337368bb764d2fd44a947aaf98d4b0adf7ebdd36faa7c60f2bcc07b0664871b51d1eeb9132525566053661db0dd116c75a4dd3c7c4436e79c1e627dfab8aa47
+  checksum: 10c0/2ce583168fd43034bf2e134334472896e7f1a665678197ddad5cde01f91761a9ac2410f59612c0c1aed579944bba488535540cecac5f865634f7d314e86a3be8
   languageName: node
   linkType: hard
 
@@ -1110,7 +1110,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "brightdate-showcase@workspace:."
   dependencies:
-    "@brightchain/brightdate": "npm:^0.32.3"
+    "@brightchain/brightdate": "npm:^0.32.5"
     "@eslint/js": "npm:^9.39.1"
     "@types/node": "npm:^22"
     "@types/react": "npm:^19.2.5"

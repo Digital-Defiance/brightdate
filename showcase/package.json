@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@brightchain/brightdate": "^0.32.3",
+    "@brightchain/brightdate": "^0.32.5",
     "date-holidays": "^3.28.0",
     "framer-motion": "^12.23.26",
     "react": "^19.2.0",

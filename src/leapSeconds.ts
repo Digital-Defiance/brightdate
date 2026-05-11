@@ -12,7 +12,7 @@ import {
   LEAP_SECOND_TABLE_REVIEWED_AT,
   LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S,
   TAI_UTC_OFFSET_AT_J2000,
-} from './constants';
+} from "./constants";
 
 /**
  * Has the stale-leap-table warning already been emitted?
@@ -40,12 +40,12 @@ function warnIfStale(utcUnixSeconds: number): void {
   staleLeapTableWarned = true;
   // Single structured console.warn so hosts can filter/route it
   console.warn(
-    '[brightdate] Leap-second table is past its validity window ' +
+    "[brightdate] Leap-second table is past its validity window " +
       `(reviewed ${LEAP_SECOND_TABLE_REVIEWED_AT}, valid through Unix ` +
       `${LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S}). Queried Unix seconds=` +
       `${utcUnixSeconds}. TAI calculations may be off by ±1s if a leap ` +
-      'second was inserted after table review. Update LEAP_SECOND_TABLE ' +
-      'from IERS Bulletin C if you need authoritative TAI past this date.',
+      "second was inserted after table review. Update LEAP_SECOND_TABLE " +
+      "from IERS Bulletin C if you need authoritative TAI past this date.",
   );
 }
 
@@ -110,28 +110,68 @@ export function utcToTai(utcUnixSeconds: number): number {
 }
 
 /**
+ * Result of converting TAI → UTC. The mapping is *not* bijective during a
+ * leap-second insertion — the second labelled `23:59:60` UTC has no
+ * Unix-second representation, so callers that need to render or store it
+ * must know it happened. This struct carries that knowledge.
+ *
+ * Convention (matching NTP / Linux `CLOCK_TAI`): for a leap-second TAI
+ * instant, `utcUnixSeconds` is the **repeated** Unix second (boundary − 1)
+ * and `isLeapSecond` is `true`. Formatters should emit `:60` instead of
+ * `:59` in that case.
+ */
+export interface TaiToUtcResult {
+  /**
+   * UTC Unix seconds (timestamp). For a leap-second TAI instant this is
+   * the repeated Unix second `boundary − 1`.
+   */
+  utcUnixSeconds: number;
+  /** `true` iff this TAI instant is a leap second (UTC label `23:59:60`). */
+  isLeapSecond: boolean;
+}
+
+/**
+ * Convert a TAI Unix timestamp to an explicit UTC labelling.
+ *
+ * Use this in preference to {@link taiToUtc} when you need to detect and
+ * render leap seconds (`23:59:60`). The plain `taiToUtc` discards the
+ * leap-second flag and is suitable only when sub-leap-second rendering
+ * is unnecessary.
+ */
+export function taiToUtcFull(taiUnixSeconds: number): TaiToUtcResult {
+  // Probe with the maximum offset to get an approximate UTC, then look up
+  // the actual offset there.
+  const probeUtc = taiUnixSeconds - CURRENT_TAI_UTC_OFFSET;
+  const offsetAtProbe = getTaiUtcOffset(probeUtc);
+  const candidateUtc = taiUnixSeconds - offsetAtProbe;
+
+  const offsetAtCandidate = getTaiUtcOffset(candidateUtc);
+  if (offsetAtCandidate === offsetAtProbe) {
+    // Stable: no leap-second boundary crossed.
+    return { utcUnixSeconds: candidateUtc, isLeapSecond: false };
+  }
+
+  // Straddles a leap-second boundary.
+  const utcUnderNew = taiUnixSeconds - offsetAtCandidate;
+  const utcUnderOld = taiUnixSeconds - offsetAtProbe;
+  if (utcUnderOld === utcUnderNew - 1) {
+    // TAI = boundary - 1 under old offset → this is the leap second.
+    return { utcUnixSeconds: utcUnderNew - 1, isLeapSecond: true };
+  }
+  return { utcUnixSeconds: utcUnderNew, isLeapSecond: false };
+}
+
+/**
  * Convert a TAI Unix timestamp (seconds) to UTC Unix timestamp (seconds).
  *
- * Note: This is slightly ambiguous during a leap second insertion,
- * but for practical purposes we find the UTC time that maps to the given TAI.
+ * Discards the leap-second flag; for astronomically precise work that may
+ * need to render `23:59:60`, use {@link taiToUtcFull}.
  *
  * @param taiUnixSeconds - TAI Unix timestamp in seconds
  * @returns UTC Unix timestamp in seconds
  */
 export function taiToUtc(taiUnixSeconds: number): number {
-  // Iterative approach: guess UTC, check if utcToTai(guess) == taiUnixSeconds
-  // Since offsets are integers and change by 1, one iteration suffices.
-  let utcGuess = taiUnixSeconds - CURRENT_TAI_UTC_OFFSET;
-  const offset = getTaiUtcOffset(utcGuess);
-  utcGuess = taiUnixSeconds - offset;
-
-  // Verify and adjust if we crossed a leap second boundary
-  const verifyOffset = getTaiUtcOffset(utcGuess);
-  if (verifyOffset !== offset) {
-    utcGuess = taiUnixSeconds - verifyOffset;
-  }
-
-  return utcGuess;
+  return taiToUtcFull(taiUnixSeconds).utcUnixSeconds;
 }
 
 /**

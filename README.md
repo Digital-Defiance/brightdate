@@ -1,10 +1,12 @@
-![npm](https://img.shields.io/npm/v/@brightchain/brightdate.svg) [![Tests](https://img.shields.io/badge/tests-985%20passing-brightgreen)](https://github.com/Digital-Defiance/brightdate)
+![npm](https://img.shields.io/npm/v/@brightchain/brightdate.svg) [![Tests](https://img.shields.io/badge/tests-989%20passing-brightgreen)](https://github.com/Digital-Defiance/brightdate)
 
 # [BrightDate](https://brightdate.brightchain.org)
 
 **A Universal Decimal Time System for Software Engineers and Scientists**
 
-BrightDate is a scientifically grounded, timezone-free time representation anchored at J2000.0 (Jan 1, 2000, 12:00:00 UTC). One scalar value. Trivially sortable, diffable, and storable.
+> *Named in homage to Star Trek's **Stardate** — a single scalar that resolves the chaos of planetary timezones into one universal quantity. BrightDate does the same for Earth.*
+
+BrightDate is a scientifically grounded, timezone-free time representation anchored at **J2000.0** — the standard astronomical epoch used by every modern observatory, space agency, and ephemeris. One scalar value. Trivially sortable, diffable, and storable.
 
 Ships with two companion types:
 
@@ -36,9 +38,37 @@ Format: DDDDD.ddddd
          Integer days since J2000.0 epoch
 ```
 
-- **Epoch:** J2000.0 = 2000-01-01T12:00:00.000Z (Unix ms = 946_728_000_000)
-- **Unit:** Decimal days
-- **Timescale:** UTC (default) or TAI (monotonic, no leap seconds)
+BrightDate is a count of **SI days** elapsed since J2000.0.
+
+### The J2000.0 Epoch — Astronomically Correct
+
+J2000.0 is defined in **Terrestrial Time (TT)**: the moment `2000-01-01T12:00:00 TT`.
+Converted to the timescales you actually encounter in software:
+
+| Timescale | Representation | Value |
+|-----------|---------------|-------|
+| TT (definition) | `2000-01-01T12:00:00.000` (no zone) | Unix s `946_728_000` |
+| TAI | `2000-01-01T11:59:27.816` (no zone) | Unix s `946_727_967.816` |
+| **UTC label** | **`2000-01-01T11:58:55.816Z`** | **Unix ms `946_727_935_816`** |
+
+The UTC label (`2000-01-01T11:58:55.816Z`) is what you see when you call `new Date(946_727_935_816)` in JavaScript. It is **not** UTC noon; the 64.184-second gap is caused by the TT–TAI offset (32.184 s) plus the 32-second TAI–UTC offset at J2000.
+
+`BrightDate = 0` at `2000-01-01T11:58:55.816Z`. This is the only astronomically correct choice.
+
+### TAI Substrate
+
+All BrightDate values are computed on a **TAI substrate**:
+
+```
+bd = (taiUnixSeconds − J2000_TAI_UNIX_S) / 86400
+```
+
+where `J2000_TAI_UNIX_S = 946_727_967.816`.
+
+This means:
+- BrightDate ticks in **exact SI seconds**, with no discontinuities.
+- Leap seconds exist only at UTC boundary conversions (`toISO`, `fromISO`, `toUnixMs`, `fromDate`, etc.). Internally, they are invisible.
+- Two consecutive UTC wall-clock seconds that straddle a leap second boundary correspond to **2 SI seconds** in BrightDate, because TAI advances by 2 during that transition. This is the correct physical behavior.
 
 ---
 
@@ -173,11 +203,11 @@ formatDuration(2.5);     // "2.500 days"
 const bd = BrightDate.now();
 
 bd.toDate();               // JavaScript Date (ms resolution)
-bd.toUnixMs();             // Unix milliseconds (Number; sub-ms error bounded ≤ 0.001)
+bd.toUnixMs();             // Unix milliseconds (integer; Math.round applied)
 bd.toUnixSeconds();        // Unix seconds (Number)
-bd.toJulianDate();         // JD = value + 2451545.0
-bd.toModifiedJulianDate(); // MJD = value + 51544.5
-bd.toISO();                // ISO 8601 string (ms resolution)
+bd.toJulianDate();         // JD = value + 2_451_545.0
+bd.toModifiedJulianDate(); // MJD = value + 51_544.5
+bd.toISO();                // ISO 8601 string; renders :60 seconds during leap second
 bd.toGPSTime();            // { gpsWeek, gpsSeconds }
 
 // TAI — monotonic, no leap-second discontinuities
@@ -185,11 +215,9 @@ const tai = bd.toTAI();
 const backToUtc = tai.toUTC();
 ```
 
-> ### ⚠️ Note on UTC ↔ TAI re-anchoring
+> ### Leap second boundary behavior
 >
-> `utcToTaiBrightDate(utcBd)` re-anchors to a TAI-based J2000 epoch. The numeric difference `(taiBd - utcBd)` equals **`(currentOffset − 32) / 86400` days**, not `currentOffset / 86400`. At J2000.0 itself (offset = 32 s) the difference is zero. At a 2020 timestamp (offset = 37 s) it's 5 seconds, not 37.
->
-> If you just want "how many seconds is TAI ahead of UTC at this moment?", call `taiUtcOffsetSecondsAt(bd)` — returns a plain integer like 32 or 37. This is the unambiguous API to prefer when you don't need a full TAI-timescale BrightDate.
+> Because BrightDate uses a TAI substrate, a UTC timestamp immediately after a leap second is 2 SI seconds later in BrightDate than the timestamp immediately before. The leap second itself is rendered as `:60` in `toISO()`. This is physically correct: during a positive leap second, the TAI clock advances by 2 while the UTC clock repeats `:59`. Callers who compute BrightDate differences see the correct SI elapsed time.
 
 ---
 
@@ -338,24 +366,55 @@ fromBinary(buf);               // 9622.50417 (Object.is bit-exact)
 
 ## Reference Dates
 
-| Event | BrightDate |
-|-------|-----------|
-| J2000.0 Epoch | 0.00000 |
-| Unix Epoch (1970-01-01) | -10957.50000 |
-| Apollo 11 Landing (1969-07-20 20:17:40Z) | ~-11125.15440 |
-| GPS Epoch (1980-01-06) | -7300.50000 |
-| Y2K (2000-01-01) | -0.50000 |
-| Current era (~2027) | ~10,000 |
+| Event | ISO 8601 (UTC) | BrightDate |
+|-------|---------------|-----------|
+| **J2000.0 (TAI substrate anchor)** | `2000-01-01T11:58:55.816Z` | **0.000000000** |
+| TT noon (definition moment) | `2000-01-01T12:00:00.000Z` | ≈ 0.000742870 |
+| Y2K midnight | `2000-01-01T00:00:00Z` | ≈ −0.499257130 |
+| Unix epoch | `1970-01-01T00:00:00Z` | ≈ −10957.499512 |
+| GPS epoch | `1980-01-06T00:00:00Z` | ≈ −7300.499408 |
+| Apollo 11 landing | `1969-07-20T20:17:40Z` | ≈ −11125.154 |
+| Current era (~2027) | — | ≈ 10,000 |
+
+---
+
+## Key Constants
+
+```typescript
+import {
+  J2000_UTC_UNIX_MS,       // 946_727_935_816  — UTC label of J2000.0 in Unix ms
+  J2000_TAI_UNIX_S,        // 946_727_967.816  — TAI Unix seconds at J2000.0
+  J2000_TT_UNIX_S,         // 946_728_000      — TT (definition) Unix seconds
+  J2000_JD,                // 2_451_545.0      — Julian Date at J2000.0
+  J2000_MJD,               // 51_544.5         — Modified Julian Date at J2000.0
+  TAI_UTC_OFFSET_AT_J2000, // 32               — TAI − UTC at J2000.0 (seconds)
+  TT_TAI_OFFSET_SECONDS,   // 32.184           — TT − TAI (seconds, fixed by definition)
+  CURRENT_TAI_UTC_OFFSET,  // 37               — current TAI − UTC (seconds, as of 2017)
+  GPS_EPOCH_UNIX_TAI,      // 315_964_819      — GPS epoch as TAI Unix seconds
+} from '@brightchain/brightdate';
+```
+
+---
+
+## Leap Seconds
+
+Leap seconds are an afterthought in UTC, not a physical phenomenon. BrightDate embraces this:
+
+- **Internally:** leap seconds don't exist. BrightDate ticks in strict SI days on a TAI substrate.
+- **At UTC boundaries:** the leap second table (`LEAP_SECOND_TABLE`) maps TAI seconds to UTC seconds. The table is valid through `LEAP_SECOND_TABLE_VALID_UNTIL_UNIX_S` and was last reviewed on `LEAP_SECOND_TABLE_REVIEWED_AT`.
+- **`toISO()` during a leap second:** renders the leap-second moment as `:60`, e.g. `1998-12-31T23:59:60.000Z`.
+- **If the table expires:** `getTaiUtcOffset()` throws a `LeapSecondTableExpiredError`. Update the library to continue.
 
 ---
 
 ## Design Philosophy
 
 1. **One number, one timeline** — no zones, no formats, no ambiguity.
-2. **Scientifically grounded** — J2000.0 anchor, TAI underneath when you need monotonicity.
+2. **Astronomically correct** — TAI substrate, J2000.0 anchor, SI days throughout.
 3. **Engineer-friendly** — arithmetic is just addition and subtraction.
-4. **Honest about precision** — documented Float64 tax and an exact companion for when you need it.
+4. **Honest about precision** — documented Float64 bounds; exact BigInt companion for when you need it.
 5. **Future-proof** — works through at least year 287,000 without losing sub-microsecond precision.
+6. **In homage to Stardate** — one universal scalar to rule them all.
 
 ---
 

@@ -1,110 +1,109 @@
 /**
  * BrightDate Conversions
  *
- * Core conversion functions between BrightDate values and other time representations.
+ * Core conversion functions between BrightDate values and other time
+ * representations.
+ *
+ * # Model
+ *
+ * BrightDate is **TAI-coherent at the substrate**. A BrightDate `bd` is
+ * defined as `(taiUnixSeconds − J2000_TAI_UNIX_S) / 86_400`. All arithmetic
+ * on BrightDate values is therefore in uniform SI seconds — no leap-second
+ * discontinuities. Leap seconds appear only at the UTC presentation boundary
+ * (`fromUnixMs`, `toUnixMs`, `fromISO`, `toISO`).
+ *
+ * # Identities
+ *
+ * - `toJulianDate(bd)` ≡ `bd + J2000_JD` (exact)
+ * - `toModifiedJulianDate(bd)` ≡ `bd + J2000_MJD` (exact)
+ * - UTC ↔ BD uses the leap-second table at the conversion boundary.
  */
 
 import {
-  J2000_UNIX_MS_UTC,
-  MS_PER_DAY,
+  J2000_JD,
+  J2000_MJD,
+  J2000_TAI_UNIX_S,
   SECONDS_PER_DAY,
-  TAI_UTC_OFFSET_AT_J2000,
-} from './constants';
-import { getTaiUtcOffset, utcToTai } from './leapSeconds';
-import type { BrightDateValue } from './types';
+} from "./constants";
+import { getTaiUtcOffset, taiToUtcFull } from "./leapSeconds";
+import type { BrightDateValue } from "./types";
+
+// ─── Internal helpers ──────────────────────────────────────────────────────────
+
+/** BrightDate → TAI Unix seconds (continuous, leap-second-free). */
+function bdToTaiUnixSeconds(bd: BrightDateValue): number {
+  return bd * SECONDS_PER_DAY + J2000_TAI_UNIX_S;
+}
+
+/** UTC Unix ms → BrightDate (leap-second-aware). */
+function utcUnixMsToBd(ms: number): BrightDateValue {
+  const utcSeconds = ms / 1000;
+  const offset = getTaiUtcOffset(Math.floor(utcSeconds));
+  const taiSeconds = utcSeconds + offset;
+  return (taiSeconds - J2000_TAI_UNIX_S) / SECONDS_PER_DAY;
+}
+
+// ─── Date / Unix-ms conversions ────────────────────────────────────────────────
 
 /**
- * Convert a JavaScript Date to a BrightDate value (UTC-based).
+ * Convert a JavaScript Date to a BrightDate value.
  *
  * Behavior for edge-case inputs:
- * - Non-Date input (string, number, null, etc.) → throws `TypeError`.
- * - Invalid Date (e.g. `new Date('bad-string')`) → returns `NaN`. This
- *   matches the behavior of `Date.getTime()` itself (which returns `NaN`
- *   for invalid Dates) and avoids breaking callers — particularly
- *   property-based test generators like fast-check's `fc.date()` — that
- *   may produce invalid Dates during shrinking. Downstream code should
- *   treat a `NaN` BrightDate as "invalid input" and reject it at its
- *   own boundaries, as it would for any `NaN` number.
+ * - Non-Date input → throws `TypeError`.
+ * - Invalid Date (e.g. `new Date('bad-string')`) → returns `NaN`.
  *
- * Cross-realm safety: `instanceof Date` fails when a Date crosses a
- * VM realm boundary (e.g. Jest's custom test environments). We therefore
- * use `Object.prototype.toString.call(v) === '[object Date]'` as the
- * cross-realm-safe type check.
- *
- * @param date - JavaScript Date object
- * @returns BrightDate value (decimal days since J2000.0); NaN if `date`
- *   is an Invalid Date.
- * @throws TypeError if `date` is not a Date instance.
+ * Cross-realm safety: uses `Object.prototype.toString.call(v) === '[object Date]'`.
  */
 export function fromDate(date: Date): BrightDateValue {
-  // Cross-realm-safe Date check.
-  // `instanceof Date` fails for Dates that cross VM realm boundaries
-  // (common in Jest custom environments, vm.runInContext, worker threads).
-  // The toString tag is the canonical duck-typed check for built-in types.
   if (
     date === null ||
-    typeof date !== 'object' ||
-    Object.prototype.toString.call(date) !== '[object Date]'
+    typeof date !== "object" ||
+    Object.prototype.toString.call(date) !== "[object Date]"
   ) {
     throw new TypeError(
       `fromDate: expected a Date instance, got ${
-        date === null ? 'null' : typeof date
+        date === null ? "null" : typeof date
       }`,
     );
   }
-  // Invalid Date -> getTime() returns NaN -> we propagate NaN.
-  // This preserves the standard JavaScript convention that NaN propagates
-  // through arithmetic, making invalid input "loud enough to notice at
-  // the final boundary" without forcing every caller to pre-validate.
-  return (date.getTime() - J2000_UNIX_MS_UTC) / MS_PER_DAY;
+  const ms = date.getTime();
+  if (!Number.isFinite(ms)) return NaN;
+  return utcUnixMsToBd(ms);
 }
 
-/**
- * Convert a BrightDate value to a JavaScript Date (UTC-based).
- *
- * @param brightDate - BrightDate value (decimal days since J2000.0)
- * @returns JavaScript Date object
- */
+/** Convert a BrightDate value to a JavaScript Date (UTC label). */
 export function toDate(brightDate: BrightDateValue): Date {
-  const unixMs = brightDate * MS_PER_DAY + J2000_UNIX_MS_UTC;
-  return new Date(unixMs);
+  return new Date(toUnixMs(brightDate));
 }
 
 /**
- * Convert a Unix timestamp (milliseconds) to a BrightDate value.
+ * Convert a Unix timestamp (milliseconds, UTC label) to a BrightDate value.
  *
- * @param unixMs - Unix timestamp in milliseconds
- * @returns BrightDate value
- * @throws TypeError if `unixMs` is NaN or not finite.
+ * @throws TypeError if `unixMs` is not a finite number.
  */
 export function fromUnixMs(unixMs: number): BrightDateValue {
-  if (typeof unixMs !== 'number' || !isFinite(unixMs)) {
+  if (typeof unixMs !== "number" || !isFinite(unixMs)) {
     throw new TypeError(
       `fromUnixMs: expected a finite number, got ${String(unixMs)}`,
     );
   }
-  return (unixMs - J2000_UNIX_MS_UTC) / MS_PER_DAY;
+  return utcUnixMsToBd(unixMs);
 }
 
-/**
- * Convert a BrightDate value to a Unix timestamp (milliseconds).
- *
- * @param brightDate - BrightDate value
- * @returns Unix timestamp in milliseconds
- */
+/** Convert a BrightDate value to Unix milliseconds (UTC label). */
 export function toUnixMs(brightDate: BrightDateValue): number {
-  return brightDate * MS_PER_DAY + J2000_UNIX_MS_UTC;
+  const taiSeconds = bdToTaiUnixSeconds(brightDate);
+  const taiSecondsFloor = Math.floor(taiSeconds);
+  const frac = taiSeconds - taiSecondsFloor;
+  const conv = taiToUtcFull(taiSecondsFloor);
+  // Unix ms are integers by convention; round to nearest to absorb float-precision
+  // noise from the TAI ↔ UTC round-trip (error is always < 1 µs, i.e. << 0.5 ms).
+  return Math.round((conv.utcUnixSeconds + frac) * 1000);
 }
 
-/**
- * Convert a Unix timestamp (seconds) to a BrightDate value.
- *
- * @param unixSeconds - Unix timestamp in seconds
- * @returns BrightDate value
- * @throws TypeError if `unixSeconds` is NaN or not finite.
- */
+/** Convert a Unix timestamp (seconds, UTC label) to a BrightDate value. */
 export function fromUnixSeconds(unixSeconds: number): BrightDateValue {
-  if (typeof unixSeconds !== 'number' || !isFinite(unixSeconds)) {
+  if (typeof unixSeconds !== "number" || !isFinite(unixSeconds)) {
     throw new TypeError(
       `fromUnixSeconds: expected a finite number, got ${String(unixSeconds)}`,
     );
@@ -112,145 +111,71 @@ export function fromUnixSeconds(unixSeconds: number): BrightDateValue {
   return fromUnixMs(unixSeconds * 1000);
 }
 
-/**
- * Convert a BrightDate value to a Unix timestamp (seconds).
- *
- * @param brightDate - BrightDate value
- * @returns Unix timestamp in seconds
- */
+/** Convert a BrightDate value to Unix seconds (UTC label). */
 export function toUnixSeconds(brightDate: BrightDateValue): number {
   return toUnixMs(brightDate) / 1000;
 }
 
-/**
- * Convert a Julian Date (JD) to a BrightDate value.
- * JD at J2000.0 = 2451545.0
- *
- * @param jd - Julian Date
- * @returns BrightDate value
- */
+// ─── Julian Date / Modified Julian Date ────────────────────────────────────────
+
+/** Convert Julian Date → BrightDate. Exact by definition (bd ≡ JD − J2000_JD). */
 export function fromJulianDate(jd: number): BrightDateValue {
-  return jd - 2451545.0;
+  return jd - J2000_JD;
 }
 
-/**
- * Convert a BrightDate value to a Julian Date (JD).
- *
- * @param brightDate - BrightDate value
- * @returns Julian Date
- */
+/** Convert BrightDate → Julian Date. Exact by definition (JD ≡ bd + J2000_JD). */
 export function toJulianDate(brightDate: BrightDateValue): number {
-  return brightDate + 2451545.0;
+  return brightDate + J2000_JD;
 }
 
-/**
- * Convert a Modified Julian Date (MJD) to a BrightDate value.
- * MJD = JD - 2400000.5
- * At J2000.0: MJD = 51544.5
- *
- * @param mjd - Modified Julian Date
- * @returns BrightDate value
- */
+/** Convert Modified Julian Date → BrightDate. Exact. */
 export function fromModifiedJulianDate(mjd: number): BrightDateValue {
-  return mjd - 51544.5;
+  return mjd - J2000_MJD;
 }
 
-/**
- * Convert a BrightDate value to a Modified Julian Date (MJD).
- *
- * @param brightDate - BrightDate value
- * @returns Modified Julian Date
- */
+/** Convert BrightDate → Modified Julian Date. Exact. */
 export function toModifiedJulianDate(brightDate: BrightDateValue): number {
-  return brightDate + 51544.5;
+  return brightDate + J2000_MJD;
 }
 
+// ─── TAI re-anchoring (legacy / identity) ──────────────────────────────────────
+
 /**
- * Convert a UTC-based BrightDate to a TAI-based BrightDate.
- *
- * TAI-based values are monotonically increasing (no leap-second discontinuities)
- * — use them for durations that must span leap seconds, audit trails, or any
- * context where "seconds elapsed" must be the true physical count.
- *
- * ### Numerical note — this is NOT a simple +N seconds shift
- *
- * The function re-anchors to a TAI-based J2000 epoch (which is itself 32 s
- * ahead of the UTC J2000 instant — that was the TAI-UTC offset at the
- * J2000.0 moment). The numeric difference between the returned TAI
- * BrightDate and the input UTC BrightDate equals
- *   `(currentOffset − 32) / 86400` days
- * NOT `currentOffset / 86400` days.
- *
- * - At J2000.0 (offset = 32): difference is 0.
- * - At 2020-01-01 (offset = 37): difference is 5 seconds.
- *
- * If you want the pure TAI-minus-UTC offset in seconds at a given moment,
- * call {@link getTaiUtcOffset} with the Unix-seconds timestamp.
- *
- * @param utcBrightDate - BrightDate value computed from UTC
- * @returns BrightDate value in TAI timescale
+ * @deprecated Now an identity. BrightDate is already TAI-coherent at the
+ * substrate; there is no longer a separate "TAI BrightDate" anchor.
+ * Retained for back-compat; new code can drop the wrapper.
  */
 export function utcToTaiBrightDate(
   utcBrightDate: BrightDateValue,
 ): BrightDateValue {
-  const unixMs = toUnixMs(utcBrightDate);
-  const utcSeconds = unixMs / 1000;
-  const taiSeconds = utcToTai(utcSeconds);
-  // Re-anchor to J2000.0 in TAI
-  const j2000TaiSeconds = J2000_UNIX_MS_UTC / 1000 + TAI_UTC_OFFSET_AT_J2000;
-  return (taiSeconds - j2000TaiSeconds) / SECONDS_PER_DAY;
+  return utcBrightDate;
 }
 
-/**
- * Convert a TAI-based BrightDate to a UTC-based BrightDate.
- *
- * Inverse of {@link utcToTaiBrightDate}. See that function's JSDoc for the
- * re-anchoring explanation.
- *
- * @param taiBrightDate - BrightDate value in TAI timescale
- * @returns BrightDate value in UTC timescale
- */
+/** @deprecated Now an identity. See {@link utcToTaiBrightDate}. */
 export function taiToUtcBrightDate(
   taiBrightDate: BrightDateValue,
 ): BrightDateValue {
-  const j2000TaiSeconds = J2000_UNIX_MS_UTC / 1000 + TAI_UTC_OFFSET_AT_J2000;
-  const taiSeconds = taiBrightDate * SECONDS_PER_DAY + j2000TaiSeconds;
-  const offset = getTaiUtcOffset(taiSeconds - 37); // approximate UTC for offset lookup
-  const utcSeconds = taiSeconds - offset;
-  return fromUnixSeconds(utcSeconds);
+  return taiBrightDate;
 }
 
 /**
- * Get the TAI − UTC offset in seconds at the moment a UTC BrightDate
- * represents. This is the unambiguous "how many seconds is TAI ahead of
- * UTC right now" number — the one most people mean when they say "TAI
- * offset." Unlike {@link utcToTaiBrightDate}, which re-anchors to
- * TAI-J2000, this returns the raw cumulative leap-second count.
+ * Cumulative TAI − UTC offset (seconds) at the moment a BrightDate represents.
  *
  * @example
  * ```ts
- * taiUtcOffsetSecondsAt(fromISO('2000-01-01T12:00:00Z'));  // 32
- * taiUtcOffsetSecondsAt(fromISO('2020-06-15T00:00:00Z'));  // 37
- * taiUtcOffsetSecondsAt(fromISO('1980-01-06T00:00:00Z'));  // 19
+ * taiUtcOffsetSecondsAt(fromISO('2000-01-01T11:58:55.816Z'));  // 32
+ * taiUtcOffsetSecondsAt(fromISO('2020-06-15T00:00:00Z'));      // 37
  * ```
- *
- * @param utcBrightDate - BrightDate value (UTC-based)
- * @returns Cumulative TAI-UTC offset in seconds at that instant
  */
-export function taiUtcOffsetSecondsAt(
-  utcBrightDate: BrightDateValue,
-): number {
-  const unixSeconds = toUnixSeconds(utcBrightDate);
-  return getTaiUtcOffset(unixSeconds);
+export function taiUtcOffsetSecondsAt(brightDate: BrightDateValue): number {
+  const taiSeconds = bdToTaiUnixSeconds(brightDate);
+  const conv = taiToUtcFull(Math.floor(taiSeconds));
+  return getTaiUtcOffset(conv.utcUnixSeconds);
 }
 
-/**
- * Convert an ISO 8601 date string to a BrightDate value.
- *
- * @param isoString - ISO 8601 formatted date string
- * @returns BrightDate value
- * @throws Error if the string cannot be parsed
- */
+// ─── ISO ───────────────────────────────────────────────────────────────────────
+
+/** Parse an ISO 8601 string to a BrightDate value. */
 export function fromISO(isoString: string): BrightDateValue {
   const date = new Date(isoString);
   if (isNaN(date.getTime())) {
@@ -260,87 +185,71 @@ export function fromISO(isoString: string): BrightDateValue {
 }
 
 /**
- * Convert a BrightDate value to an ISO 8601 date string.
- *
- * @param brightDate - BrightDate value
- * @returns ISO 8601 formatted date string
+ * Render a BrightDate as an ISO 8601 UTC string. Leap-second instants
+ * render with `:60` in the seconds field.
  */
 export function toISO(brightDate: BrightDateValue): string {
-  return toDate(brightDate).toISOString();
+  const taiSeconds = bdToTaiUnixSeconds(brightDate);
+  const taiSecondsFloor = Math.floor(taiSeconds);
+  const frac = taiSeconds - taiSecondsFloor;
+  const conv = taiToUtcFull(taiSecondsFloor);
+
+  if (conv.isLeapSecond) {
+    // Borrow JS Date to format the broken-down calendar fields, then patch :60.
+    const baseMs = conv.utcUnixSeconds * 1000;
+    const dt = new Date(baseMs);
+    const yyyy = dt.getUTCFullYear();
+    const mo = String(dt.getUTCMonth() + 1).padStart(2, "0");
+    const dd = String(dt.getUTCDate()).padStart(2, "0");
+    const hh = String(dt.getUTCHours()).padStart(2, "0");
+    const mi = String(dt.getUTCMinutes()).padStart(2, "0");
+    const ms = String(Math.floor(frac * 1000)).padStart(3, "0");
+    return `${yyyy}-${mo}-${dd}T${hh}:${mi}:60.${ms}Z`;
+  }
+  const utcMs = (conv.utcUnixSeconds + frac) * 1000;
+  return new Date(utcMs).toISOString();
 }
 
+// ─── GPS time ──────────────────────────────────────────────────────────────────
+
+/** GPS epoch (1980-01-06T00:00:00 UTC) as a TAI Unix-second integer. */
+const GPS_EPOCH_UNIX_TAI = 315_964_819; // 315_964_800 UTC + 19 (GPS-TAI offset)
+const SECONDS_PER_WEEK = 604_800;
+
 /**
- * Convert GPS time (weeks and seconds) to a BrightDate value.
- * GPS epoch: January 6, 1980, 00:00:00 UTC
- * GPS time does not include leap seconds (like TAI, offset by 19s).
+ * Convert GPS time (weeks + seconds-of-week) to a BrightDate value.
  *
- * @param gpsWeek - GPS week number
- * @param gpsSeconds - Seconds within the GPS week
- * @returns BrightDate value (UTC-based)
+ * GPS is TAI-anchored (no leap seconds). The conversion is exact through TAI.
  */
 export function fromGPSTime(
   gpsWeek: number,
   gpsSeconds: number,
 ): BrightDateValue {
-  // GPS epoch in Unix seconds: Jan 6, 1980 00:00:00 UTC
-  const GPS_EPOCH_UNIX = 315964800;
-  const SECONDS_PER_WEEK = 604800;
-
-  // GPS time in Unix seconds (GPS timescale, no leap seconds)
-  const gpsUnixSeconds =
-    GPS_EPOCH_UNIX + gpsWeek * SECONDS_PER_WEEK + gpsSeconds;
-
-  // GPS time = TAI - 19 seconds, so TAI = GPS + 19
-  // To get UTC: subtract current TAI-UTC offset from TAI
-  const taiSeconds = gpsUnixSeconds + 19;
-  const taiUtcOffset = getTaiUtcOffset(gpsUnixSeconds); // approximate
-  const utcSeconds = taiSeconds - taiUtcOffset;
-
-  return fromUnixSeconds(utcSeconds);
+  const taiUnixSeconds =
+    GPS_EPOCH_UNIX_TAI + gpsWeek * SECONDS_PER_WEEK + gpsSeconds;
+  return (taiUnixSeconds - J2000_TAI_UNIX_S) / SECONDS_PER_DAY;
 }
 
-/**
- * Convert a BrightDate value to GPS time (weeks and seconds).
- *
- * @param brightDate - BrightDate value
- * @returns Object with gpsWeek and gpsSeconds
- */
+/** Convert a BrightDate value to GPS time (weeks + seconds-of-week). */
 export function toGPSTime(brightDate: BrightDateValue): {
   gpsWeek: number;
   gpsSeconds: number;
 } {
-  const GPS_EPOCH_UNIX = 315964800;
-  const SECONDS_PER_WEEK = 604800;
-
-  const utcSeconds = toUnixSeconds(brightDate);
-  const taiUtcOffset = getTaiUtcOffset(utcSeconds);
-  const taiSeconds = utcSeconds + taiUtcOffset;
-  // GPS = TAI - 19
-  const gpsSeconds = taiSeconds - 19;
-  const gpsTotalSeconds = gpsSeconds - GPS_EPOCH_UNIX;
-
+  const taiSeconds = bdToTaiUnixSeconds(brightDate);
+  const gpsTotalSeconds = taiSeconds - GPS_EPOCH_UNIX_TAI;
   const gpsWeek = Math.floor(gpsTotalSeconds / SECONDS_PER_WEEK);
-  const gpsSecondsOfWeek = gpsTotalSeconds - gpsWeek * SECONDS_PER_WEEK;
-
-  return { gpsWeek, gpsSeconds: gpsSecondsOfWeek };
+  const gpsSeconds = gpsTotalSeconds - gpsWeek * SECONDS_PER_WEEK;
+  return { gpsWeek, gpsSeconds };
 }
 
-/**
- * Get the current time as a BrightDate value.
- *
- * @returns BrightDate value for the current moment
- */
+// ─── Misc ──────────────────────────────────────────────────────────────────────
+
+/** Current BrightDate value (UTC-anchored via `Date.now()`). */
 export function now(): BrightDateValue {
   return fromDate(new Date());
 }
 
-/**
- * Parse a BrightDate string (e.g., "9622.50417") back to a numeric value.
- *
- * @param brightDateString - String representation of a BrightDate
- * @returns BrightDate value
- * @throws Error if the string cannot be parsed
- */
+/** Parse a BrightDate string (e.g. `"9622.50417"`) back to a number. */
 export function parse(brightDateString: string): BrightDateValue {
   const value = parseFloat(brightDateString);
   if (isNaN(value)) {
@@ -350,27 +259,24 @@ export function parse(brightDateString: string): BrightDateValue {
 }
 
 /**
- * Normalize any timestamp input to a BrightDateValue.
+ * Coerce a BrightDateValue | Date | ISO-string to a BrightDateValue.
  *
- * Accepts a BrightDateValue (number), a JavaScript Date, or an ISO 8601 string
- * and returns the equivalent BrightDateValue. Use this at system boundaries
- * where external data may arrive in any of these forms.
- *
- * @param input - A BrightDateValue, JavaScript Date, or ISO 8601 string
- * @returns BrightDateValue (decimal days since J2000.0)
- * @throws TypeError if input is NaN, non-finite, or an unparseable date string
+ * @throws TypeError if input is NaN, non-finite, or an unparseable date string.
  */
-export function normalize(input: BrightDateValue | Date | string): BrightDateValue {
-  if (typeof input === 'number') {
+export function normalize(
+  input: BrightDateValue | Date | string,
+): BrightDateValue {
+  if (typeof input === "number") {
     if (!isFinite(input)) {
-      throw new TypeError(`BrightDateValue must be a finite number, got: ${input}`);
+      throw new TypeError(
+        `BrightDateValue must be a finite number, got: ${input}`,
+      );
     }
     return input;
   }
   if (input instanceof Date) {
     return fromDate(input);
   }
-  // string path — re-throw as TypeError for consistent error type
   try {
     return fromISO(input);
   } catch {
