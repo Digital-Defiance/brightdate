@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 import {
   FaGithub,
@@ -7,6 +8,7 @@ import {
   FaRocket,
   FaLightbulb,
   FaStar,
+  FaTerminal,
 } from "react-icons/fa";
 import "./About.css";
 
@@ -25,10 +27,12 @@ const About = () => {
         transition={{ duration: 0.6 }}
       >
         <h2 className="section-title">
-          Built with <span className="gradient-text">❤️</span> by Digital Defiance
+          Built with <span className="gradient-text">❤️</span> by Digital
+          Defiance
         </h2>
         <p className="about-subtitle">
-          Open source. MIT licensed. Built for software engineers and scientists.
+          Open source. MIT licensed. Built for software engineers and
+          scientists.
         </p>
 
         <div className="about-content">
@@ -42,19 +46,68 @@ const About = () => {
               <FaRocket /> Why BrightDate?
             </h3>
             <p>
-              Timestamps are one of the most mishandled data types in software. Timezone confusion,
-              DST bugs, leap-second ambiguity, sort-order hacks — they're all symptoms of the same
-              underlying problem: no single, universal reference point.
+              Timezone handling is not hard to <em>understand</em> — it is hard
+              to <em>not forget</em>. Every service boundary, API call, and
+              database write is an opportunity to drop the offset or apply the
+              wrong one. BrightDate replaces the translation problem with a
+              single rule: there is no translation. One float, everywhere.
             </p>
             <p>
-              <strong>BrightDate</strong> solves this with one scalar number anchored at J2000.0 —
-              the same epoch astronomers have used for decades. Float64 covers 287,000+ years
-              with sub-microsecond resolution in the current era. Simple subtraction gives elapsed
-              days. Native numeric comparison gives sort order. No libraries required.
+              <strong>BrightDate</strong> is a Float64 count of SI days since
+              J2000.0 — the standard epoch used by every space agency and
+              observatory. Simple subtraction gives elapsed days. Native numeric
+              comparison gives sort order. No libraries required. Float64 covers
+              287,000+ years with ~190 ns resolution in the current era.
             </p>
             <p className="highlight-text">
-              <FaCode /> <strong>100% Open Source.</strong> MIT licensed.
-              Freely available, forever.
+              <FaCode /> <strong>100% Open Source.</strong> MIT licensed. Freely
+              available, forever.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="about-main card"
+            style={{ marginTop: "1.5rem" }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.3, duration: 0.6 }}
+          >
+            <h3 className="about-heading">
+              <FaTerminal /> BSH: BrightDate in the Wild
+            </h3>
+            <p>
+              The best evidence that BrightDate is production-ready is{" "}
+              <a
+                href="https://bsh.brightchain.org"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BSH (BrightShell)
+              </a>
+              — a fork of zsh 5.10 that wires BrightDate into every time-related
+              surface of the shell: the prompt (<code>%P</code>),{" "}
+              <code>ls -l</code> timestamps, <code>stat</code> output,{" "}
+              <code>history -t</code>, <code>sched</code>, and the{" "}
+              <code>$BRIGHTEPOCH</code> parameter. The same float appears
+              everywhere. No translation. No format mismatch.
+            </p>
+            <p>
+              BSH uses the <code>brightdate</code> Rust crate at its core,
+              statically linked via a minimal C FFI. It is the living proof that
+              BrightDate composes cleanly with real-world C codebases — and that
+              once every time surface speaks the same number, the cognitive
+              overhead of working with timestamps drops to nearly zero.
+            </p>
+            <p
+              style={{
+                fontSize: "0.85rem",
+                fontStyle: "italic",
+                marginBottom: 0,
+              }}
+            >
+              The <strong>BSH chsh challenge</strong>: switch your login shell
+              for a week. Your prompt, files, history, and scripts all agree on
+              one decimal. Once you stop translating, it is hard to go back.
             </p>
           </motion.div>
 
@@ -84,11 +137,11 @@ const About = () => {
               <div className="feature-icon">
                 <FaCode />
               </div>
-              <h4>985+ Tests</h4>
+              <h4>1035+ Tests</h4>
               <p>
                 Property-based and unit tests cover arithmetic identities,
-                astronomical correctness, serialization round-trips, and
-                edge cases at extreme magnitudes.
+                astronomical correctness, serialization round-trips, and edge
+                cases at extreme magnitudes.
               </p>
             </motion.div>
 
@@ -101,10 +154,13 @@ const About = () => {
               <div className="feature-icon">
                 <FaStar />
               </div>
-              <h4>Two Companion Types</h4>
+              <h4>Three Companion Types</h4>
               <p>
-                <strong>BrightDate</strong> (Float64) for fast math and astronomy.
-                <strong> ExactBrightDate</strong> (BigInt picoseconds) for
+                <strong>BrightDate</strong> (Float64) for fast math and
+                astronomy. <strong>BrightInstant</strong> (TAI seconds + nanos)
+                for exact 1-nanosecond precision at any magnitude — distributed
+                systems, GPS, interplanetary timing.{" "}
+                <strong>ExactBrightDate</strong> (BigInt picoseconds) for
                 bit-exact storage boundaries where lossless round-trips matter.
               </p>
             </motion.div>
@@ -119,9 +175,9 @@ const About = () => {
         >
           <h3>Get Involved</h3>
           <p>
-            Star the repo, open an issue, or send a PR. BrightDate is built for the
-            development community and thrives on real-world feedback. Need something
-            custom?{" "}
+            Star the repo, open an issue, or send a PR. BrightDate is built for
+            the development community and thrives on real-world feedback. Need
+            something custom?{" "}
             <a
               href="https://digitaldefiance.org"
               target="_blank"
@@ -140,6 +196,24 @@ const About = () => {
             >
               <FaRocket />
               Install from npm
+            </a>
+            <a
+              href="https://crates.io/crates/brightdate"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+            >
+              <FaCode />
+              Rust crate
+            </a>
+            <a
+              href="https://github.com/Digital-Defiance/homebrew-tap"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary"
+            >
+              <FaRocket />
+              Homebrew tap
             </a>
             <a
               href="https://github.com/Digital-Defiance/brightdate"
@@ -191,6 +265,24 @@ const About = () => {
             >
               npm
             </a>
+            {" • "}
+            <a
+              href="https://crates.io/crates/brightdate"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              crates.io
+            </a>
+            {" • "}
+            <a
+              href="https://github.com/Digital-Defiance/homebrew-tap"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Homebrew tap
+            </a>
+            {" • "}
+            <Link to="/privacy">Privacy Policy</Link>
           </p>
         </div>
       </motion.div>

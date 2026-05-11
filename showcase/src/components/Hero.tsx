@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FaGithub, FaNpm } from "react-icons/fa";
+import { FaGithub, FaNpm, FaRust, FaTerminal } from "react-icons/fa";
 import { fromDate } from "@brightchain/brightdate";
 import "./Hero.css";
 
@@ -63,7 +63,7 @@ const Hero = ({ scrollY }: HeroProps) => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.8 }}
         >
-          A Universal Decimal Time System
+          One number. Every language. No timezones.
         </motion.h2>
 
         <motion.p
@@ -72,10 +72,12 @@ const Hero = ({ scrollY }: HeroProps) => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.8 }}
         >
-          One scalar value. Timezone-free. Trivially sortable, diffable, and
-          storable.
+          BrightDate is a timezone-free decimal time scalar anchored at J2000.0
+          — the same epoch used by every space agency and observatory.
           <br />
-          Anchored at J2000.0 — the same epoch used by astronomers worldwide.
+          One float. Trivially sortable, diffable, and storable.{" "}
+          <code>b&nbsp;&minus;&nbsp;a&nbsp;=&nbsp;elapsed days</code> — no
+          libraries, no parsing, no surprises.
           <br />
           <span className="hero-highlight">
             🌍 No Timezones · ⏱ Simple Arithmetic · 🚀 Interplanetary Ready · 🔬
@@ -109,6 +111,24 @@ const Hero = ({ scrollY }: HeroProps) => {
           >
             <FaNpm />
             npm install
+          </a>
+          <a
+            href="https://crates.io/crates/brightdate"
+            className="btn btn-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaRust />
+            cargo add
+          </a>
+          <a
+            href="https://github.com/Digital-Defiance/homebrew-tap"
+            className="btn btn-secondary"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <FaTerminal />
+            brew install
           </a>
           <a
             href="https://github.com/Digital-Defiance/brightdate"

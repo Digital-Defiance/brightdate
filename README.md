@@ -1,16 +1,17 @@
-![npm](https://img.shields.io/npm/v/@brightchain/brightdate.svg) [![Tests](https://img.shields.io/badge/tests-989%20passing-brightgreen)](https://github.com/Digital-Defiance/brightdate)
+![npm](https://img.shields.io/npm/v/@brightchain/brightdate.svg) [![Tests](https://img.shields.io/badge/tests-1035%20passing-brightgreen)](https://github.com/Digital-Defiance/brightdate)
 
 # [BrightDate](https://brightdate.brightchain.org)
 
 **A Universal Decimal Time System for Software Engineers and Scientists**
 
-> *Named in homage to Star Trek's **Stardate** — a single scalar that resolves the chaos of planetary timezones into one universal quantity. BrightDate does the same for Earth.*
+> *Named in homage to Star Trek's **[Stardate](https://memory-alpha.fandom.com/wiki/Stardate)** and reference to [BrightChain](https://github.brightchain.org) — a single scalar that resolves the chaos of planetary timezones into one universal quantity. BrightDate does the same for Earth.*
 
 BrightDate is a scientifically grounded, timezone-free time representation anchored at **J2000.0** — the standard astronomical epoch used by every modern observatory, space agency, and ephemeris. One scalar value. Trivially sortable, diffable, and storable.
 
-Ships with two companion types:
+Ships with three companion types:
 
 - `BrightDate` — Float64 decimal days. Ergonomic, fast, great for math and astronomy. This is what most code should use.
+- `BrightInstant` — BigInt TAI seconds + integer nanos. **1-nanosecond precision at any magnitude**, with no Float64 drift. The rigorous form for distributed systems, GPS engineering, and interplanetary timing.
 - `ExactBrightDate` — BigInt picoseconds. Bit-exact for every integer-ms input. Use at storage boundaries where lossless round-trips matter.
 
 ---
@@ -66,6 +67,7 @@ bd = (taiUnixSeconds − J2000_TAI_UNIX_S) / 86400
 where `J2000_TAI_UNIX_S = 946_727_967.816`.
 
 This means:
+
 - BrightDate ticks in **exact SI seconds**, with no discontinuities.
 - Leap seconds exist only at UTC boundary conversions (`toISO`, `fromISO`, `toUnixMs`, `fromDate`, etc.). Internally, they are invisible.
 - Two consecutive UTC wall-clock seconds that straddle a leap second boundary correspond to **2 SI seconds** in BrightDate, because TAI advances by 2 during that transition. This is the correct physical behavior.
@@ -74,10 +76,47 @@ This means:
 
 ## Installation
 
+### TypeScript / JavaScript (npm)
+
 ```bash
 npm install @brightchain/brightdate
 # or
 yarn add @brightchain/brightdate
+```
+
+### Rust (crates.io)
+
+A Rust port of BrightDate is published as the [`brightdate`](https://crates.io/crates/brightdate) crate, with the same J2000.0 / TAI semantics as this library:
+
+```toml
+# Cargo.toml
+[dependencies]
+brightdate = "0.1"
+```
+
+```rust
+use brightdate::BrightDate;
+let now = BrightDate::now();
+println!("{:.5}", now);
+```
+
+Source: [Digital-Defiance/brightdate-rust](https://github.com/Digital-Defiance/brightdate-rust).
+
+### CLI utilities (Homebrew + cargo)
+
+The Rust workspace also ships five drop-in replacements for the classic Unix date/time utilities — `bdate`, `btime`, `buptime`, `bcal`, `bwatch` — that emit BrightDate values.
+
+```bash
+# Homebrew (macOS / Linux)
+brew tap digital-defiance/tap
+brew install digital-defiance/tap/bdate
+brew install digital-defiance/tap/btime
+brew install digital-defiance/tap/buptime
+brew install digital-defiance/tap/bcal
+brew install digital-defiance/tap/bwatch
+
+# Or via cargo
+cargo install bdate btime buptime bcal bwatch
 ```
 
 ---
@@ -218,6 +257,32 @@ const backToUtc = tai.toUTC();
 > ### Leap second boundary behavior
 >
 > Because BrightDate uses a TAI substrate, a UTC timestamp immediately after a leap second is 2 SI seconds later in BrightDate than the timestamp immediately before. The leap second itself is rendered as `:60` in `toISO()`. This is physically correct: during a positive leap second, the TAI clock advances by 2 while the UTC clock repeats `:59`. Callers who compute BrightDate differences see the correct SI elapsed time.
+
+---
+
+## BrightInstant (TAI seconds + nanos)
+
+`BrightInstant` is the rigorous, lossless companion to `BrightDate`. It stores `BigInt` TAI seconds + integer nanoseconds since J2000.0 — so you get **exact 1-nanosecond precision at any magnitude**, with no Float64 drift. Use it when nanosecond fidelity matters indefinitely far from the epoch (distributed systems, GPS, interplanetary mission timing).
+
+```typescript
+import { BrightInstant } from '@brightchain/brightdate';
+
+// J2000.0 itself
+const epoch = BrightInstant.J2000;
+epoch.taiSecondsSinceJ2000; // 0n
+epoch.taiNanos;             // 0
+
+// One SI day later, plus one nanosecond
+const later = BrightInstant.fromTaiComponents(86_400n, 1);
+
+// Round-trip the f64 form
+const bd = BrightDate.now();
+const inst = BrightInstant.fromBrightDate(bd);
+const back = inst.toBrightDate(); // lossy to f64 resolution; lossless within range
+
+// UTC / ISO / Unix-ms round-trips honor the leap-second table
+BrightInstant.fromUnixMs(Date.now()).toUnixMs();
+```
 
 ---
 

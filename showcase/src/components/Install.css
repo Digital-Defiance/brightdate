@@ -1,0 +1,272 @@
+.install {
+  background: var(--bg-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.install::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(222, 165, 132, 0.08),
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(252, 200, 130, 0.08),
+      transparent 50%
+    );
+  pointer-events: none;
+}
+
+.install-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.install-eyebrow {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: linear-gradient(
+    90deg,
+    rgba(222, 165, 132, 0.15),
+    rgba(0, 255, 136, 0.15)
+  );
+  border: 1px solid rgba(222, 165, 132, 0.4);
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.install-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.15rem;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.install-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  position: relative;
+}
+
+.install-card {
+  position: relative;
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.install-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.install-card.rust {
+  border-color: rgba(222, 165, 132, 0.35);
+  background: linear-gradient(
+    160deg,
+    rgba(222, 165, 132, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+.install-card.brew {
+  border-color: rgba(252, 200, 130, 0.35);
+  background: linear-gradient(
+    160deg,
+    rgba(252, 200, 130, 0.08),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+.install-card.npm {
+  border-color: rgba(203, 56, 55, 0.3);
+  background: linear-gradient(
+    160deg,
+    rgba(203, 56, 55, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+}
+
+.install-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.install-card-icon {
+  font-size: 1.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.install-card.rust .install-card-icon {
+  color: #dea584;
+}
+
+.install-card.brew .install-card-icon {
+  color: #fbb040;
+}
+
+.install-card.npm .install-card-icon {
+  color: #cb3837;
+}
+
+.install-card h3 {
+  font-size: 1.35rem;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.install-card-tag {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(0, 255, 136, 0.12);
+  color: var(--accent-primary);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+}
+
+.install-card-desc {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.install-snippet {
+  position: relative;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.6;
+}
+
+.install-snippet .prompt {
+  color: var(--accent-primary);
+  user-select: none;
+  margin-right: 0.4rem;
+}
+
+.install-snippet .comment {
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.install-card-links {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.2rem;
+  font-size: 0.88rem;
+}
+
+.install-card-links a {
+  color: var(--accent-primary);
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(0, 255, 136, 0.4);
+  transition: opacity 0.2s ease;
+}
+
+.install-card-links a:hover {
+  opacity: 0.75;
+}
+
+.install-tools {
+  margin-top: 3rem;
+  padding: 2rem;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.install-tools h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.4rem;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.install-tools-sub {
+  text-align: center;
+  color: var(--text-secondary);
+  margin: 0 0 1.75rem;
+  font-size: 0.98rem;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.tool-card {
+  padding: 1rem 1.1rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.25);
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.tool-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.tool-name {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-weight: 700;
+  color: var(--accent-primary);
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+
+.tool-desc {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .install-card {
+    padding: 1.5rem;
+  }
+  .install-snippet {
+    font-size: 0.8rem;
+  }
+}
