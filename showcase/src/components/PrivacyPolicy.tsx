@@ -31,6 +31,11 @@ const PRODUCTS = [
     name: "WearOS Watch Face",
     desc: "Android / Wear OS app",
   },
+  {
+    icon: "📱",
+    name: "Android Widget",
+    desc: "Android home screen widget",
+  },
 ];
 
 const PrivacyPolicy = () => {
