@@ -98,11 +98,79 @@ const About = () => {
               once every time surface speaks the same number, the cognitive
               overhead of working with timestamps drops to nearly zero.
             </p>
+
+            <h4 style={{ marginTop: "1.25rem", marginBottom: "0.5rem" }}>
+              Glob time qualifiers — what zsh can't do
+            </h4>
+            <p>
+              Zsh's glob qualifiers (<code>.m</code>, <code>.a</code>,{" "}
+              <code>.c</code>) only accept <strong>integer</strong> day counts.
+              BSH patches the qualifier engine to accept{" "}
+              <strong>fractional decimal-day values</strong> — the same unit as
+              BrightDate. One centiday is 864 seconds (~14 minutes), so you can
+              filter files with precision that zsh simply cannot express:
+            </p>
+            <pre
+              style={{
+                background: "var(--card-bg, #1a1a2e)",
+                borderRadius: "0.5rem",
+                padding: "0.85rem 1rem",
+                fontSize: "0.78rem",
+                overflowX: "auto",
+                margin: "0.5rem 0 0.75rem",
+              }}
+            >
+              <code>{`# zsh: .m-1 means "within 1 day" — can't go finer
+# BSH: fractional values work natively
+echo *.log(.m-0.05)   # within 0.05 d  (~72 min)
+echo *.log(.m-0.01)   # within 1 centiday (~14 min)
+echo *.log(.m-0.001)  # within 1 milliday (~86 s)`}</code>
+            </pre>
+            <p>
+              BSH also introduces the <code>.b</code> qualifier — birth time
+              (file creation time from <code>st_birthtimespec</code> on macOS
+              and BSD). This is entirely absent from upstream zsh.{" "}
+              <code>touch</code> can reset <code>mtime</code>; it cannot change
+              when a file was <em>born</em>. Combining birth-time filtering with
+              fractional precision gives you a tamper-resistant timestamp at the
+              filesystem level:
+            </p>
+            <pre
+              style={{
+                background: "var(--card-bg, #1a1a2e)",
+                borderRadius: "0.5rem",
+                padding: "0.85rem 1rem",
+                fontSize: "0.78rem",
+                overflowX: "auto",
+                margin: "0.5rem 0 0.75rem",
+              }}
+            >
+              <code>{`$ touch old.log && perl -e 'utime time()-7200, time()-7200, "old.log"'
+$ echo *.log(.m-0.01)   # mtime says both are fresh after touch
+new.log old.log
+$ echo *.log(.b-0.01)   # birthtime never lies — old.log was born 2 h ago
+new.log
+
+# Sort all files by creation time, newest first
+echo *(ob)
+# Today's logs, oldest-first
+echo /var/log/*.log(.b-1On)`}</code>
+            </pre>
+            <p
+              style={{ fontSize: "0.85rem", color: "var(--text-muted, #aaa)" }}
+            >
+              All suffixes accept fractional values: <code>d</code> (days,
+              default), <code>h</code> (hours), <code>m</code> (minutes),{" "}
+              <code>s</code> (seconds), <code>w</code> (weeks), <code>M</code>{" "}
+              (months).
+            </p>
+
             <p
               style={{
                 fontSize: "0.85rem",
                 fontStyle: "italic",
                 marginBottom: 0,
+                marginTop: "1rem",
               }}
             >
               The <strong>BSH chsh challenge</strong>: switch your login shell

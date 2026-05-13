@@ -36,6 +36,11 @@ const PRODUCTS = [
     name: "Android Widget",
     desc: "Android home screen widget",
   },
+  {
+    icon: "⏰",
+    name: "Android Alarm",
+    desc: "Android alarm clock app",
+  },
 ];
 
 const PrivacyPolicy = () => {
