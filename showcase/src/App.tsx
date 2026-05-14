@@ -7,6 +7,7 @@ import Features from "./components/Features";
 import Hero from "./components/Hero";
 import Install from "./components/Install";
 import PrivacyPolicy from "./components/PrivacyPolicy";
+import Support from "./components/Support";
 
 function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -35,6 +36,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/support" element={<Support />} />
         </Routes>
       </div>
     </BrowserRouter>

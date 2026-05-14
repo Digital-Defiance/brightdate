@@ -350,6 +350,8 @@ echo /var/log/*.log(.b-1On)`}</code>
               Homebrew tap
             </a>
             {" • "}
+            <Link to="/support">Support</Link>
+            {" • "}
             <Link to="/privacy">Privacy Policy</Link>
           </p>
         </div>
