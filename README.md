@@ -1,6 +1,6 @@
 ![npm](https://img.shields.io/npm/v/@brightchain/brightdate.svg) [![Tests](https://img.shields.io/badge/tests-1035%20passing-brightgreen)](https://github.com/Digital-Defiance/brightdate)
 
-# [BrightDate](https://brightdate.brightchain.org)
+# [BrightDate](https://brightdate.org)
 
 **A Universal Decimal Time System for Software Engineers and Scientists**
 
