@@ -41,6 +41,11 @@ const PRODUCTS = [
     name: "Android Alarm",
     desc: "Android alarm clock app",
   },
+  {
+    icon: "💻",
+    name: "Android Status Bar",
+    desc: "Android status bar app",
+  },
 ];
 
 const PrivacyPolicy = () => {
