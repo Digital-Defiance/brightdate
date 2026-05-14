@@ -1,5 +1,35 @@
+/* Added for Codacy: move inline styles from About.tsx to CSS classes */
+.about-glob-heading {
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.about-pre {
+  background: var(--card-bg, #1a1a2e);
+  border-radius: 0.5rem;
+  padding: 0.85rem 1rem;
+  font-size: 0.78rem;
+  overflow-x: auto;
+  margin: 0.5rem 0 0.75rem;
+}
+
+.about-glob-suffix {
+  font-size: 0.85rem;
+  color: var(--text-muted, #aaa);
+}
+
+.about-bsh-challenge {
+  font-size: 0.85rem;
+  font-style: italic;
+  margin-bottom: 0;
+  margin-top: 1rem;
+}
 .about {
-  background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--bg-primary) 0%,
+    var(--bg-secondary) 100%
+  );
   position: relative;
 }
 

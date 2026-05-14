@@ -1,3 +1,4 @@
+# Codacy CLI analysis required after workflow edit
 name: Deploy Showcase to GitHub Pages
 
 on:
@@ -20,7 +21,15 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      REGISTRY_URL: https://verdaccio-registry.nicefield-46a11a16.westus2.azurecontainerapps.io
+      BRIGHTCHAIN_REGISTRY_TOKEN: ${{ secrets.BRIGHTCHAIN_REGISTRY_TOKEN }}
     steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -30,11 +39,49 @@ jobs:
           node-version: "20"
 
       - name: Enable Corepack
-        run: corepack enable
+        run: |
+          corepack enable
+          yarn set version 4.14.1
 
-      - name: Install dependencies
+      - name: Self-Whitelist Runner IP (with Retries), Configure Yarn for Private Registry, and Install Dependencies
         working-directory: ./showcase
-        run: yarn install --immutable
+        run: |
+          set -e
+          # Get runner IP and resource ID
+          RUNNER_IP=$(curl -s https://ifconfig.me)
+          RESOURCE_ID=$(az containerapp show -n verdaccio-registry -g BrightChain --query id -o tsv)
+
+          # Fetch and update allowlist with current runner IP
+          CURRENT_ALLOWLIST=$(az containerapp show -n verdaccio-registry -g BrightChain --query "properties.configuration.ingress.ipSecurityRestrictions" -o json)
+          UPDATED_ALLOWLIST=$(echo "$CURRENT_ALLOWLIST" | jq --arg ip "$RUNNER_IP/32" '
+            map(select(.name != "AllowGitHubRunner")) + 
+            [{"name":"AllowGitHubRunner","ipAddressRange":$ip,"action":"Allow"}]
+          ')
+          PATCH_BODY=$(jq -c --argjson arr "$UPDATED_ALLOWLIST" '{"properties":{"configuration":{"ingress":{"ipSecurityRestrictions":$arr}}}}' <<< '{}')
+
+          # Patch allowlist with retries
+          for i in {1..5}; do
+            az rest --method patch --url "${RESOURCE_ID}?api-version=2023-05-01" --body "$PATCH_BODY" \
+              && break || sleep 30
+          done
+
+          # Wait for Azure to apply the change
+          sleep 10
+
+          # Print final allowlist for audit
+          az containerapp show -n verdaccio-registry -g BrightChain --query "properties.configuration.ingress.ipSecurityRestrictions"
+
+          # Yarn and registry config
+          yarn config set nodeLinker node-modules
+          yarn config set 'npmScopes["awesome.me"].npmRegistryServer'  "$REGISTRY_URL"
+          yarn config set 'npmScopes["awesome.me"].npmAlwaysAuth'      true
+          yarn config set 'npmScopes["fortawesome"].npmRegistryServer' "$REGISTRY_URL"
+          yarn config set 'npmScopes["fortawesome"].npmAlwaysAuth'     true
+          yarn config set "npmRegistries[\"$REGISTRY_URL\"].npmAuthToken"  "${{ secrets.BRIGHTCHAIN_REGISTRY_TOKEN}}"
+          yarn config set "npmRegistries[\"$REGISTRY_URL\"].npmAlwaysAuth" true
+
+          curl -sSf https://verdaccio-registry.nicefield-46a11a16.westus2.azurecontainerapps.io > /dev/null
+          yarn install --immutable
 
       - name: Build
         working-directory: ./showcase

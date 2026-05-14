@@ -11,6 +11,8 @@ import {
   FaTerminal,
 } from "react-icons/fa";
 import "./About.css";
+import { faStarship } from "@awesome.me/kit-a20d532681/icons/classic/regular";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const About = () => {
   const [ref, inView] = useInView({
@@ -36,6 +38,32 @@ const About = () => {
         </p>
 
         <div className="about-content">
+          <motion.div
+            className="about-main card"
+            style={{ marginBottom: "1.5rem" }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.15, duration: 0.6 }}
+          >
+            <h3 className="about-heading">
+              <FontAwesomeIcon icon={faStarship} /> Star Dates &amp; BrightDate
+            </h3>
+            <p>
+              If you’re a Star Trek fan, you’ve probably wondered if there’s a
+              formula for stardates. The truth is: <strong>there isn’t</strong>{" "}
+              — stardates are famously discontinuous across the series, and even
+              within a single show, the numbers jump around with no consistent
+              logic. (Trust us, we tried!)
+            </p>
+            <p>
+              <strong>BrightDate</strong> is as close to a real,
+              scientifically-grounded stardate as you can get — even though it’s
+              “non-canon.” It’s a single, sortable, universal number that
+              actually means something: SI days since J2000.0, the epoch used by
+              every modern observatory and space agency. If you ever wanted a
+              stardate you could use in real code, this is it.
+            </p>
+          </motion.div>
           <motion.div
             className="about-main card"
             initial={{ opacity: 0, y: 30 }}
@@ -99,7 +127,7 @@ const About = () => {
               overhead of working with timestamps drops to nearly zero.
             </p>
 
-            <h4 style={{ marginTop: "1.25rem", marginBottom: "0.5rem" }}>
+            <h4 className="about-glob-heading">
               Glob time qualifiers — what zsh can't do
             </h4>
             <p>
@@ -110,16 +138,7 @@ const About = () => {
               BrightDate. One centiday is 864 seconds (~14 minutes), so you can
               filter files with precision that zsh simply cannot express:
             </p>
-            <pre
-              style={{
-                background: "var(--card-bg, #1a1a2e)",
-                borderRadius: "0.5rem",
-                padding: "0.85rem 1rem",
-                fontSize: "0.78rem",
-                overflowX: "auto",
-                margin: "0.5rem 0 0.75rem",
-              }}
-            >
+            <pre className="about-pre">
               <code>{`# zsh: .m-1 means "within 1 day" — can't go finer
 # BSH: fractional values work natively
 echo *.log(.m-0.05)   # within 0.05 d  (~72 min)
@@ -135,16 +154,7 @@ echo *.log(.m-0.001)  # within 1 milliday (~86 s)`}</code>
               fractional precision gives you a tamper-resistant timestamp at the
               filesystem level:
             </p>
-            <pre
-              style={{
-                background: "var(--card-bg, #1a1a2e)",
-                borderRadius: "0.5rem",
-                padding: "0.85rem 1rem",
-                fontSize: "0.78rem",
-                overflowX: "auto",
-                margin: "0.5rem 0 0.75rem",
-              }}
-            >
+            <pre className="about-pre">
               <code>{`$ touch old.log && perl -e 'utime time()-7200, time()-7200, "old.log"'
 $ echo *.log(.m-0.01)   # mtime says both are fresh after touch
 new.log old.log
@@ -156,23 +166,14 @@ echo *(ob)
 # Today's logs, oldest-first
 echo /var/log/*.log(.b-1On)`}</code>
             </pre>
-            <p
-              style={{ fontSize: "0.85rem", color: "var(--text-muted, #aaa)" }}
-            >
+            <p className="about-glob-suffix">
               All suffixes accept fractional values: <code>d</code> (days,
               default), <code>h</code> (hours), <code>m</code> (minutes),{" "}
               <code>s</code> (seconds), <code>w</code> (weeks), <code>M</code>{" "}
               (months).
             </p>
 
-            <p
-              style={{
-                fontSize: "0.85rem",
-                fontStyle: "italic",
-                marginBottom: 0,
-                marginTop: "1rem",
-              }}
-            >
+            <p className="about-bsh-challenge">
               The <strong>BSH chsh challenge</strong>: switch your login shell
               for a week. Your prompt, files, history, and scripts all agree on
               one decimal. Once you stop translating, it is hard to go back.
