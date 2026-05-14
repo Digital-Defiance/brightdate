@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1024 500">
+  <!-- Generator: Adobe Illustrator 30.4.0, SVG Export Plug-In . SVG Version: 2.1.4 Build 226)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #111;
+      }
+
+      .st1 {
+        font-size: 30px;
+        letter-spacing: -.02em;
+      }
+
+      .st1, .st2, .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10, .st11, .st12, .st13, .st14 {
+        isolation: isolate;
+      }
+
+      .st1, .st3, .st6, .st7 {
+        fill: gold;
+      }
+
+      .st1, .st3, .st8 {
+        font-family: RobotoMono-Regular, 'Roboto Mono';
+      }
+
+      .st2 {
+        fill: #aaa;
+        font-family: Helvetica-Light, Helvetica;
+        font-size: 20px;
+        font-weight: 300;
+        letter-spacing: .05em;
+      }
+
+      .st3 {
+        font-size: 12px;
+        letter-spacing: .08em;
+      }
+
+      .st4 {
+        font-size: 11px;
+        letter-spacing: .36em;
+      }
+
+      .st4, .st9 {
+        fill: #888;
+        font-family: Helvetica, Helvetica;
+      }
+
+      .st6 {
+        opacity: .8;
+      }
+
+      .st7, .st14 {
+        opacity: .4;
+      }
+
+      .st8 {
+        font-size: 72px;
+      }
+
+      .st8, .st10, .st11, .st12, .st13, .st14 {
+        fill: #fff;
+      }
+
+      .st9 {
+        font-size: 18px;
+        letter-spacing: .33em;
+      }
+
+      .st15 {
+        fill: #1a1a1a;
+      }
+
+      .st10 {
+        opacity: .3;
+      }
+
+      .st11 {
+        opacity: .35;
+      }
+
+      .st12 {
+        opacity: .5;
+      }
+
+      .st13 {
+        opacity: .45;
+      }
+    </style>
+  </defs>
+  <rect y="0" width="1024" height="500"/>
+  <circle class="st12" cx="48" cy="42" r="1.5"/>
+  <circle class="st14" cx="130" cy="88" r="1.2"/>
+  <circle class="st11" cx="220" cy="35" r="1.8"/>
+  <circle class="st12" cx="310" cy="72" r="1"/>
+  <circle class="st14" cx="420" cy="28" r="1.4"/>
+  <circle class="st10" cx="560" cy="55" r="1.2"/>
+  <circle class="st13" cx="680" cy="38" r="1.6"/>
+  <circle class="st14" cx="780" cy="80" r="1"/>
+  <circle class="st12" cx="880" cy="22" r="1.3"/>
+  <circle class="st11" cx="970" cy="65" r="1.5"/>
+  <circle class="st14" cx="60" cy="440" r="1.2"/>
+  <circle class="st11" cx="160" cy="468" r="1.5"/>
+  <circle class="st12" cx="290" cy="455" r="1"/>
+  <circle class="st14" cx="740" cy="462" r="1.3"/>
+  <circle class="st11" cx="860" cy="445" r="1.6"/>
+  <circle class="st13" cx="960" cy="475" r="1.2"/>
+  <circle class="st10" cx="75" cy="200" r="1"/>
+  <circle class="st10" cx="950" cy="280" r="1.2"/>
+  <circle class="st11" cx="995" cy="155" r="1"/>
+  <circle class="st10" cx="30" cy="320" r="1.3"/>
+  <rect class="st0" x="60" y="160" width="260" height="170" rx="40" ry="40"/>
+  <g class="st5">
+    <text class="st4" transform="translate(139.82 223)"><tspan x="0" y="0">BRIGHTDATE</tspan></text>
+  </g>
+  <g class="st5">
+    <text class="st1" transform="translate(107.35 277)"><tspan x="0" y="0">9627.47168</tspan></text>
+  </g>
+  <text class="st9" transform="translate(463.48 181.39)"><tspan x="0" y="0">ANDROID WIDGET</tspan></text>
+  <g class="st5">
+    <text class="st8" transform="translate(363.96 265)"><tspan x="0" y="0">BrightDate</tspan></text>
+  </g>
+  <rect class="st6" x="370" y="280" width="420" height="3"/>
+  <g class="st5">
+    <text class="st2" transform="translate(401.33 330)"><tspan x="0" y="0">One universal scalar. No timezones.</tspan></text>
+  </g>
+  <path class="st15" d="M376,368h112c9.94,0,18,8.06,18,18h0c0,9.94-8.06,18-18,18h-112c-9.94,0-18-8.06-18-18h0c0-9.94,8.06-18,18-18Z"/>
+  <g class="st5">
+    <text class="st3" transform="translate(366.39 391)"><tspan x="0" y="0">J2000.0 ANCHORED</tspan></text>
+  </g>
+  <path class="st15" d="M536,368h92c9.94,0,18,8.06,18,18h0c0,9.94-8.06,18-18,18h-92c-9.94,0-18-8.06-18-18h0c0-9.94,8.06-18,18-18Z"/>
+  <g class="st5">
+    <text class="st3" transform="translate(528.69 391)"><tspan x="0" y="0">TAI SUBSTRATE</tspan></text>
+  </g>
+  <path class="st15" d="M676,368h112c9.94,0,18,8.06,18,18h0c0,9.94-8.06,18-18,18h-112c-9.94,0-18-8.06-18-18h0c0-9.94,8.06-18,18-18Z"/>
+  <g class="st5">
+    <text class="st3" transform="translate(678.69 391)"><tspan x="0" y="0">TIMEZONE-FREE</tspan></text>
+  </g>
+  <rect class="st7" y="0" width="1024" height="3"/>
+  <rect class="st7" y="497" width="1024" height="3"/>
+</svg>

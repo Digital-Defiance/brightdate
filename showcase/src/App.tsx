@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
+import Apps from "./components/Apps";
 import DatePage from "./components/DatePage";
 import Features from "./components/Features";
 import Hero from "./components/Hero";
@@ -23,6 +24,7 @@ function Home() {
       <Hero scrollY={scrollY} />
       <Features />
       <Install />
+      <Apps />
       <DatePage />
       <About />
     </>
