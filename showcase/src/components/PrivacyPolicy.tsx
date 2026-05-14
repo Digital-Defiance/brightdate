@@ -51,6 +51,16 @@ const PRODUCTS = [
 const PrivacyPolicy = () => {
   return (
     <section className="privacy section" id="privacy">
+      <title>Privacy Policy - BrightDate</title>
+      <meta
+        name="description"
+        content="Privacy Policy for BrightDate, bsh (zsh BrightShell port), and the WearOS Watch Face by Digital Defiance. None of these products collect any data."
+      />
+      <meta property="og:title" content="Privacy Policy - BrightDate" />
+      <meta
+        property="og:description"
+        content="Privacy Policy for BrightDate, bsh, and the WearOS Watch Face. No data is collected."
+      />
       <motion.div
         className="privacy-container"
         initial={{ opacity: 0, y: 24 }}
