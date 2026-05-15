@@ -37,11 +37,19 @@ const SpacetimePromo: FC = () => {
           by <code>@brightchain/brightdate</code>.
         </p>
         <Link to="/spacetime" className="spacetime-promo-cta">
-          Read the Bright Spacetime Standard
+          Explore the Bright Spacetime Standard
           <span className="spacetime-promo-cta-arrow" aria-hidden="true">
             →
           </span>
         </Link>
+        <a
+          href="https://github.brightchain.org/docs/papers/bright-spacetime-standard/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="spacetime-promo-paper"
+        >
+          📄 Read the paper
+        </a>
       </motion.div>
     </section>
   );

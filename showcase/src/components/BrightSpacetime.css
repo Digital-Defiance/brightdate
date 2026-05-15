@@ -65,6 +65,28 @@
   line-height: 1.6;
 }
 
+.spacetime-paper-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.55rem 1.2rem;
+  border: 1px solid var(--accent-primary, #00ff88);
+  border-radius: 999px;
+  color: var(--accent-primary, #00ff88);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.spacetime-paper-link:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 255, 136, 0.08);
+}
+
 /* ─── Generic spacetime section ────────────────────────────────── */
 .spacetime-section {
   margin-bottom: 3.5rem;

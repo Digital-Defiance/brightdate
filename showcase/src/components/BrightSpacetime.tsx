@@ -516,6 +516,14 @@ const BrightSpacetime: FC = () => (
         <p className="spacetime-subtitle">
           A decimal SI hierarchy for the c = 1 convention physics already uses.
         </p>
+        <a
+          href="https://github.brightchain.org/docs/papers/bright-spacetime-standard/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="spacetime-paper-link"
+        >
+          📄 Read the paper →
+        </a>
       </motion.header>
 
       <main>
@@ -553,6 +561,14 @@ const BrightSpacetime: FC = () => (
           rel="noopener noreferrer"
         >
           @brightchain/brightdate
+        </a>{" "}
+        · paper:{" "}
+        <a
+          href="https://github.brightchain.org/docs/papers/bright-spacetime-standard/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          The Bright Spacetime Standard
         </a>
       </footer>
     </div>
