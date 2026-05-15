@@ -1,0 +1,585 @@
+/* ─── BrightSpacetime page ─────────────────────────────────────── */
+.spacetime {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.spacetime-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(0, 153, 255, 0.12) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.spacetime-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem 4rem;
+}
+
+/* ─── Header ───────────────────────────────────────────────────── */
+.spacetime-back {
+  display: block;
+  width: fit-content;
+  margin: 0 0 1.5rem;
+  text-align: left;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.spacetime-back:hover {
+  color: var(--accent-primary);
+}
+
+.spacetime-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.spacetime-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 1.5rem 0 1rem;
+  line-height: 1.05;
+}
+
+.spacetime-subtitle {
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 400;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ─── Generic spacetime section ────────────────────────────────── */
+.spacetime-section {
+  margin-bottom: 3.5rem;
+}
+
+.spacetime-section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.spacetime-section-lead {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.spacetime-card {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ─── c = 1 hero block ─────────────────────────────────────────── */
+.spacetime-c-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .spacetime-c-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+.spacetime-c-body {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.spacetime-c-body strong {
+  color: var(--text-primary);
+}
+
+.spacetime-c-card {
+  background: rgba(0, 255, 136, 0.06);
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.spacetime-c-glyph {
+  font-family: monospace;
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-weight: 700;
+  color: var(--accent-primary);
+  line-height: 1;
+}
+
+.spacetime-c-defn {
+  margin-top: 1rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.spacetime-c-note {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+/* ─── Minkowski metric ─────────────────────────────────────────── */
+.spacetime-metric-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .spacetime-metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.spacetime-metric-eq {
+  text-align: center;
+  font-family: monospace;
+}
+
+.spacetime-metric-eq-label {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+}
+
+.spacetime-metric-eq-si {
+  font-size: 1.15rem;
+  color: var(--text-primary);
+}
+
+.spacetime-metric-eq-arrow {
+  color: var(--text-secondary);
+  font-size: 1.75rem;
+  margin: 1rem 0;
+}
+
+.spacetime-metric-eq-bright {
+  font-size: 1.15rem;
+  color: var(--accent-secondary);
+}
+
+.spacetime-metric-body {
+  color: var(--text-secondary);
+  line-height: 1.75;
+  font-size: 0.95rem;
+}
+
+.spacetime-metric-body code {
+  font-family: monospace;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.spacetime-metric-body code.is-bright {
+  color: var(--accent-secondary);
+  background: rgba(0, 153, 255, 0.08);
+}
+
+/* ─── Units table ──────────────────────────────────────────────── */
+.spacetime-table-wrap {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(17, 24, 39, 0.6);
+}
+
+.spacetime-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.spacetime-table thead tr {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.spacetime-table th {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.spacetime-table th:last-child {
+  text-align: right;
+}
+
+.spacetime-table tbody tr {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease;
+}
+
+.spacetime-table tbody tr:hover {
+  background: rgba(0, 153, 255, 0.05);
+}
+
+.spacetime-table td {
+  padding: 1.25rem 1.5rem;
+  vertical-align: top;
+}
+
+.spacetime-table td:last-child {
+  text-align: right;
+}
+
+.spacetime-table-unit {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.spacetime-table-symbol {
+  color: var(--accent-primary);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.spacetime-table-context {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: monospace;
+  margin-top: 0.25rem;
+}
+
+.spacetime-table-basis {
+  font-family: monospace;
+  color: var(--accent-secondary);
+  font-size: 0.9rem;
+}
+
+.spacetime-table-distance {
+  font-family: monospace;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.spacetime-table-caption {
+  text-align: center;
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* ─── Converter ────────────────────────────────────────────────── */
+.spacetime-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.spacetime-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  font-family: monospace;
+  font-size: 1.05rem;
+  color: var(--accent-secondary);
+  transition: border-color 0.2s ease;
+}
+
+.spacetime-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.spacetime-pill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .spacetime-pill-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.spacetime-pill {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+}
+
+.spacetime-pill.is-highlight {
+  background: rgba(0, 255, 136, 0.08);
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+.spacetime-pill-label {
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.spacetime-pill-value {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-top: 0.25rem;
+  word-break: break-all;
+}
+
+.spacetime-pill.is-highlight .spacetime-pill-value {
+  color: var(--accent-primary);
+}
+
+.spacetime-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.spacetime-preset {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.spacetime-preset:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* ─── Mars example ─────────────────────────────────────────────── */
+.spacetime-mars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .spacetime-mars-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.spacetime-mars-col h3 {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.spacetime-mars-col.is-bright h3 {
+  color: var(--accent-primary);
+}
+
+.spacetime-mars-pre {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 1rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.spacetime-mars-col.is-bright .spacetime-mars-pre {
+  color: var(--accent-secondary);
+  background: rgba(0, 153, 255, 0.06);
+  border-color: rgba(0, 153, 255, 0.2);
+}
+
+.spacetime-mars-footnote {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin-top: 1.5rem;
+}
+
+.spacetime-mars-footnote code {
+  font-family: monospace;
+  color: var(--accent-secondary);
+  background: rgba(0, 153, 255, 0.08);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+.spacetime-mars-roundtrip {
+  font-family: monospace;
+  color: var(--accent-primary);
+}
+
+/* ─── Time dilation slider ─────────────────────────────────────── */
+.spacetime-slider {
+  width: 100%;
+  accent-color: var(--accent-primary);
+}
+
+.spacetime-beta-readout {
+  font-family: monospace;
+  color: var(--accent-primary);
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
+.spacetime-trace {
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* ─── Why this matters ─────────────────────────────────────────── */
+.spacetime-why-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .spacetime-why-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.spacetime-why-card {
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.8) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.spacetime-why-card h3 {
+  color: var(--accent-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.spacetime-why-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.spacetime-why-card em {
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* ─── Definitional chain ───────────────────────────────────────── */
+.spacetime-defs {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.spacetime-defs-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.75rem 0;
+}
+
+.spacetime-defs-row:last-child {
+  border-bottom: none;
+}
+
+.spacetime-defs-term {
+  color: var(--accent-primary);
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.spacetime-defs-defn {
+  margin: 0;
+  padding-left: 0;
+}
+
+@media (min-width: 768px) {
+  .spacetime-defs-row {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 1.5rem;
+    align-items: baseline;
+  }
+  .spacetime-defs-term {
+    margin-bottom: 0;
+  }
+}
+
+/* ─── Footer ───────────────────────────────────────────────────── */
+.spacetime-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.spacetime-footer a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+.spacetime-footer a:hover {
+  color: var(--accent-secondary);
+}

@@ -3,10 +3,13 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "module": "ESNext",
     "skipLibCheck": true,
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -14,14 +17,14 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
-
     /* Source-link the parent library so TS sees latest exports
        (mirrors the vite alias in vite.config.ts). */
     "baseUrl": ".",
     "paths": {
-      "@brightchain/brightdate": ["../src/index.ts"]
+      "@brightchain/brightdate": [
+        "../src/index.ts"
+      ]
     },
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -29,5 +32,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

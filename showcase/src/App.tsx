@@ -3,13 +3,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
 import Apps from "./components/Apps";
+import BrightSpacetime from "./components/BrightSpacetime";
 import DatePage from "./components/DatePage";
 import Features from "./components/Features";
 import Hero from "./components/Hero";
 import Install from "./components/Install";
 import PrivacyPolicy from "./components/PrivacyPolicy";
+import SpacetimePromo from "./components/SpacetimePromo";
 import Support from "./components/Support";
-import BrightSpacetimePage from "./components/BrightSpacetimePage";
 
 function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -27,6 +28,7 @@ function Home() {
       <Install />
       <Apps />
       <DatePage />
+      <SpacetimePromo />
       <About />
     </>
   );
@@ -38,9 +40,9 @@ function App() {
       <div className="app">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/spacetime" element={<BrightSpacetime />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/support" element={<Support />} />
-          <Route path="/spacetime" element={<BrightSpacetimePage />} />
         </Routes>
       </div>
     </BrowserRouter>

@@ -42,7 +42,7 @@ function formatBright(metres: number): string {
   return `${(bs / 1e9).toPrecision(4)} Gbs`;
 }
 
-const BrightSpacetimePage: FC = () => {
+const BrightSpacetime: FC = () => {
   // Distance converter
   const [distanceInput, setDistanceInput] = useState("149597870700"); // 1 AU
   const distanceM = useMemo(() => {
@@ -492,4 +492,4 @@ const Def: FC<{ term: string; defn: string }> = ({ term, defn }) => (
   </>
 );
 
-export default BrightSpacetimePage;
+export default BrightSpacetime;
