@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "org.digitaldefiance.brightdate.companion",
+    "sha256_cert_fingerprints": ["BA:41:E5:85:B4:C4:55:BF:F4:94:B4:AE:48:42:B4:11:58:B0:BC:82:B0:89:8E:F9:8F:1C:38:75:A0:44:A4:96"]
+  }
+}]

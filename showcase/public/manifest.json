@@ -1,0 +1,17 @@
+{
+  "name": "BrightDate",
+  "short_name": "BrightDate",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "High-precision decimal time for the Digital Defiance guild.",
+  "icons": [
+    {
+      "src": "brightdate.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
