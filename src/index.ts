@@ -253,6 +253,49 @@ export {
 } from "./interplanetary";
 export type { SolarSystemBody } from "./interplanetary";
 
+// ─── Spacetime (Bright Spacetime Standard) ────────────────────────────────────
+export {
+  BRIGHT_METER_M,
+  BRIGHT_METER_UNITS,
+  BRIGHT_SECOND_UNITS,
+  LIGHT_DAY_M,
+  LIGHT_DAY_M_BIGINT,
+  LIGHT_DAY_UNITS,
+  SPEED_OF_LIGHT_M_PER_S,
+  SPEED_OF_LIGHT_M_PER_S_BIGINT,
+  brightMetersToMetres,
+  brightMetersToSeconds,
+  brightSecondsToDays,
+  daysToBrightSeconds,
+  daysToMetres,
+  daysToMetresExact,
+  metresToBrightMeters,
+  metresToDays,
+  metresToSeconds,
+  metresToSecondsExact,
+  secondsToBrightMeters,
+  secondsToMetres,
+  secondsToMetresExact,
+} from "./spacetime";
+export type { BrightUnit } from "./spacetime";
+
+// ─── Relativity (Minkowski / Lorentz) ─────────────────────────────────────────
+export {
+  addVelocities,
+  boost,
+  causallyConnected,
+  dopplerFactor,
+  gamma,
+  intervalKind,
+  intervalSquared,
+  properDistanceBetween,
+  properTimeAlong,
+  properTimeBetween,
+  rapidity,
+  speed,
+} from "./relativity";
+export type { IntervalKind, SpacetimeEvent, Velocity } from "./relativity";
+
 // ─── Logging ───────────────────────────────────────────────────────────────────
 export {
   BrightDateStopwatch,
