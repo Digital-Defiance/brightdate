@@ -9,6 +9,7 @@ import Hero from "./components/Hero";
 import Install from "./components/Install";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import Support from "./components/Support";
+import BrightSpacetimePage from "./components/BrightSpacetimePage";
 
 function Home() {
   const [scrollY, setScrollY] = useState(0);
@@ -39,6 +40,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/spacetime" element={<BrightSpacetimePage />} />
         </Routes>
       </div>
     </BrowserRouter>

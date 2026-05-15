@@ -15,6 +15,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Source-link the parent library so TS sees latest exports
+       (mirrors the vite alias in vite.config.ts). */
+    "baseUrl": ".",
+    "paths": {
+      "@brightchain/brightdate": ["../src/index.ts"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,

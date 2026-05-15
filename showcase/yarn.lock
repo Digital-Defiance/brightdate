@@ -218,12 +218,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@brightchain/brightdate@npm:^0.32.5":
-  version: 0.32.5
-  resolution: "@brightchain/brightdate@npm:0.32.5"
+"@brightchain/brightdate@npm:^0.32.6":
+  version: 0.32.6
+  resolution: "@brightchain/brightdate@npm:0.32.6"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/5338fc577af678a425ae3d700c2423de60bd27b9d6aeb0df58d89caf31e28b258859b35e571cd53c7ac911f1f543183192a9901c6de9d08e9fab78fd689fbd28
+  checksum: 10/1b73d72e5117aa6a39495fb0c5f7517d4817c7c0013154935407dd0d7072996099365ec59ee9911987b60d64a05ced89081924ca05f604b83cd6bbf6a115a563
   languageName: node
   linkType: hard
 
@@ -1146,7 +1146,7 @@ __metadata:
   resolution: "brightdate-showcase@workspace:."
   dependencies:
     "@awesome.me/kit-a20d532681": "npm:^1.0.23"
-    "@brightchain/brightdate": "npm:^0.32.5"
+    "@brightchain/brightdate": "npm:^0.32.6"
     "@eslint/js": "npm:^9.39.1"
     "@fortawesome/fontawesome-svg-core": "npm:^7.2.0"
     "@fortawesome/react-fontawesome": "npm:^3.3.1"
