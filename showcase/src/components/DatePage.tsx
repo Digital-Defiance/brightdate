@@ -16,6 +16,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { BrightDate } from "./BrightDate";
 import { HeroBadge } from "./HeroBadge";
+import BrightDateIcon from "./BrightDateIcon";
 import "./DatePage.css";
 
 // ─── Date Format Helpers ─────────────────────────────────────────────────────
@@ -253,6 +254,13 @@ export const DatePage: FC = () => {
           transition={{ delay: 0.3, duration: 0.6 }}
         >
           <h3 className="datepage-card-title">
+            <BrightDateIcon
+              height={32}
+              width={32}
+              aria-label="BrightDate icon"
+              fill="#0099ff"
+              style={{ verticalAlign: "middle", paddingRight: 5 }}
+            />
             <a
               href="https://github.com/Digital-Defiance/brightdate/blob/main/README.md"
               target="_blank"
