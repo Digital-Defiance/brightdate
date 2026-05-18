@@ -1,0 +1,299 @@
+.fraction-table-page {
+  min-height: 100vh;
+  padding: 5rem 1.5rem 6rem;
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(0, 153, 255, 0.1),
+      transparent 55%
+    ),
+    radial-gradient(circle at 85% 80%, rgba(0, 255, 136, 0.08), transparent 55%);
+}
+
+.fraction-table-container {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.fraction-table-back {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary, #9ca3af);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.fraction-table-back:hover {
+  color: var(--accent-primary, #00ff88);
+}
+
+.fraction-table-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0 0 0.75rem;
+  line-height: 1.15;
+}
+
+.fraction-table-subtitle {
+  color: var(--text-secondary, #9ca3af);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0 0 2rem;
+  max-width: 720px;
+}
+
+.fraction-table-subtitle code {
+  background: rgba(0, 153, 255, 0.12);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.fraction-table-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.fraction-table-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.fraction-table-meta-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary, #9ca3af);
+}
+
+.fraction-table-meta-value {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary, #e5e7eb);
+}
+
+.fraction-table-meta-value.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.fraction-table-card {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.fraction-table-scroll {
+  overflow-x: auto;
+}
+
+.fraction-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.fraction-table th,
+.fraction-table td {
+  padding: 0.55rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.fraction-table thead th {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary, #9ca3af);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  font-weight: 600;
+  vertical-align: bottom;
+}
+
+.fraction-table .col-sub {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-secondary, #9ca3af);
+  opacity: 0.75;
+  margin-top: 0.15rem;
+}
+
+.fraction-table tbody th {
+  font-weight: 600;
+  color: var(--text-primary, #e5e7eb);
+}
+
+.fraction-table .mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.fraction-table .dim {
+  color: var(--text-secondary, #9ca3af);
+}
+
+.fraction-table .col-hour {
+  width: 5.5rem;
+  white-space: nowrap;
+}
+
+.fraction-table .col-half {
+  white-space: nowrap;
+}
+
+.fraction-table tbody tr.row-quarter {
+  background: rgba(0, 153, 255, 0.06);
+}
+
+.fraction-table tbody tr.row-quarter th {
+  color: var(--accent-secondary, #0099ff);
+}
+
+.fraction-table tbody tr.row-current {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 136, 0.18),
+    rgba(0, 153, 255, 0.1)
+  );
+  outline: 1px solid rgba(0, 255, 136, 0.4);
+}
+
+.fraction-table tbody tr.row-current th {
+  color: var(--accent-primary, #00ff88);
+}
+
+.fraction-table tbody tr.row-current.row-quarter {
+  /* Current row wins over quarter-day tint. */
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 136, 0.22),
+    rgba(0, 153, 255, 0.14)
+  );
+}
+
+.fraction-table-legend {
+  list-style: none;
+  padding: 1rem 0 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #9ca3af);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 0.75rem;
+}
+
+.fraction-table-legend code {
+  background: rgba(0, 153, 255, 0.12);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.95em;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}
+
+.legend-dot-current {
+  background: linear-gradient(135deg, #00ff88, #0099ff);
+  box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+}
+
+.legend-dot-quarter {
+  background: rgba(0, 153, 255, 0.55);
+}
+
+.fraction-table-tips {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.5rem 1.75rem;
+}
+
+.fraction-table-tips h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.25rem;
+}
+
+.fraction-table-tips ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: var(--text-secondary, #9ca3af);
+  line-height: 1.7;
+}
+
+.fraction-table-tips strong {
+  color: var(--text-primary, #e5e7eb);
+}
+
+.fraction-table-tips code {
+  background: rgba(0, 153, 255, 0.12);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.95em;
+}
+
+.fraction-table-section-title {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  color: var(--text-primary, #e5e7eb);
+}
+
+.fraction-table-section-intro {
+  margin: 0 0 1rem;
+  color: var(--text-secondary, #9ca3af);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.fraction-table-section-intro code {
+  background: rgba(0, 153, 255, 0.12);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.95em;
+}
+
+.fraction-table tbody tr.row-now {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 255, 136, 0.28),
+    rgba(0, 153, 255, 0.18)
+  );
+  outline: 2px solid var(--accent-primary, #00ff88);
+  outline-offset: -2px;
+}
+
+.fraction-table tbody tr.row-now th {
+  color: var(--accent-primary, #00ff88);
+  font-weight: 700;
+}
+
+.fraction-table tbody tr.row-now td {
+  font-weight: 600;
+}
+
+.fraction-table tbody tr.row-now .col-sub {
+  color: var(--accent-primary, #00ff88);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 1;
+}

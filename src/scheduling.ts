@@ -276,12 +276,22 @@ export class BrightDateTimeline {
 }
 
 /**
- * Calculate the time until the next occurrence of a daily event.
- * E.g., "how long until 0.75 (18:00 UTC) today or tomorrow?"
+ * Calculate the time until the next occurrence of a daily event whose target
+ * time is expressed as a fraction of a **BrightDate day** (the raw scalar
+ * fractional part — not a UTC civil-day fraction).
  *
- * @param targetFraction - Target time-of-day as fractional day [0, 1)
+ * **Important:** because the BD-day boundary is the J2000.0 anchor instant
+ * (UTC `2000-01-01T11:58:55.816Z`), `targetFraction = 0.5` is **not** UTC
+ * noon — it is "halfway through a BD day", which is offset from UTC noon
+ * by the J2000 anchor plus accumulated leap seconds.
+ *
+ * If you need "next 18:00 UTC" semantics, convert via
+ * `bdAtUtcWallClock(now, 18)` and take the difference yourself. BrightDate
+ * intentionally does not model local civil time — only UTC.
+ *
+ * @param targetFraction - Target on the BD-day grid in `[0, 1)`
  * @param currentBrightDate - Current BrightDate (default: now)
- * @returns Duration in days until the next occurrence
+ * @returns Duration in days until the next occurrence on the BD-day grid
  */
 export function timeUntilDailyEvent(
   targetFraction: number,

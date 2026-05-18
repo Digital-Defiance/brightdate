@@ -1,13 +1,25 @@
 import {
   BrightDate,
-  brightDateToLabel,
+  formatBD,
   fromDate,
-  PBD_ERA_SECONDS,
-  type BrightLabel,
 } from "@brightchain/brightdate";
 import { FC, useMemo, useState } from "react";
 import type React from "react";
 import "./PBD.css";
+
+/**
+ * BrightDate / Display-Label demonstrator.
+ *
+ * The convention this component visualises:
+ *
+ * - `bd ≥ 0` renders as `BD <bd>`.
+ * - `bd < 0` renders as `PBD <abs(bd)>`.
+ * - `BD 0` is the canonical label for J2000.0; there is no `PBD 0`.
+ *
+ * The internal scalar never changes — `PBD` is a sign-flipping cosmetic
+ * for negative values. The slider walks the BrightDate timeline on a
+ * signed log scale so you can see the label flip at J2000.0.
+ */
 
 export interface PBDProps {
   /**
@@ -20,9 +32,9 @@ export interface PBDProps {
   date?: Date;
   /** A raw BrightDate scalar (decimal days since J2000.0). */
   value?: number;
-  /** Decimal places on the page / scalar value. Defaults to `0`. */
+  /** Decimal places on the displayed value. Defaults to `0`. */
   precision?: number;
-  /** Hide the metadata grid (era meaning, raw bs, progress bar). */
+  /** Hide the metadata grid. */
   compact?: boolean;
 }
 
@@ -44,7 +56,7 @@ function sliderToSeconds(t: number): number {
   if (t === 0) return 0;
   const sign = t < 0 ? -1 : 1;
   const mag = Math.abs(t);
-  // Linear in log10|seconds| from 10⁻¹ s (10ths of a second) up to MAX_LOG10.
+  // Linear in log10|seconds| from 10⁻¹ s up to MAX_LOG10.
   const log10Secs = -1 + mag * (MAX_LOG10_SECONDS + 1);
   return sign * Math.pow(10, log10Secs);
 }
@@ -137,41 +149,26 @@ const PRESETS: ReadonlyArray<Preset> = [
 // ─── Subcomponents ───────────────────────────────────────────────────────────
 
 interface DisplayProps {
-  label: BrightLabel;
   rawSeconds: number;
   precision: number;
   compact: boolean;
 }
 
-const LabelDisplay: FC<DisplayProps> = ({
-  label,
-  rawSeconds,
-  precision,
-  compact,
-}) => {
-  const isBD = label.kind === "BD";
+const LabelDisplay: FC<DisplayProps> = ({ rawSeconds, precision, compact }) => {
+  const days = rawSeconds / SECONDS_PER_DAY;
+  const isBD = days >= 0;
+  const headline = formatBD(days, precision);
 
-  const headline = isBD
-    ? `${label.seconds.toLocaleString(undefined, {
-        maximumFractionDigits: precision,
-        minimumFractionDigits: precision,
-      })} BD`
-    : `PBD${label.era}: ${label.page.toLocaleString(undefined, {
-        maximumFractionDigits: precision,
-        minimumFractionDigits: precision,
-      })}`;
+  const offsetText =
+    rawSeconds === 0 ? "J2000.0 — the anchor itself" : describeOffset(rawSeconds);
 
-  const offsetText = isBD
-    ? rawSeconds === 0
-      ? "J2000.0 — the anchor itself"
-      : describeOffset(rawSeconds)
-    : describeOffset(rawSeconds);
-
+  // Horizontal progress strip: fraction of the way across one Tera-second
+  // window, used as a visual cadence indicator. For BD, fills toward the
+  // next Tera-second hence; for negatives, fills toward J2000.0.
+  const TERA_SECOND = 1_000_000_000_000;
   const fillPct = isBD
-    ? // For BD, show the (mod T) gauge as a "next Tera-Bright" countdown.
-      ((label.seconds % PBD_ERA_SECONDS) / PBD_ERA_SECONDS) * 100
-    : (label.page / PBD_ERA_SECONDS) * 100;
-
+    ? ((rawSeconds % TERA_SECOND) / TERA_SECOND) * 100
+    : (1 - (Math.abs(rawSeconds) % TERA_SECOND) / TERA_SECOND) * 100;
   const fillClamped = Math.max(0, Math.min(100, fillPct));
 
   const hint = eraHint(rawSeconds);
@@ -180,7 +177,7 @@ const LabelDisplay: FC<DisplayProps> = ({
     <div
       className={`pbd ${isBD ? "is-bd" : "is-pbd"}`}
       data-testid="pbd"
-      data-kind={label.kind}
+      data-kind={isBD ? "BD" : "PBD"}
     >
       <span className="pbd-label">{headline}</span>
       {!compact && (
@@ -188,7 +185,7 @@ const LabelDisplay: FC<DisplayProps> = ({
           <dl className="pbd-meta">
             <dt>Kind</dt>
             <dd>
-              {isBD ? "BD (post-J2000.0)" : `PBD${label.era}`}
+              {isBD ? "BD (post-J2000.0)" : "PBD (pre-J2000.0)"}
               {hint ? ` — ${hint}` : ""}
             </dd>
             <dt>Offset</dt>
@@ -204,11 +201,7 @@ const LabelDisplay: FC<DisplayProps> = ({
           <div>
             <div
               className="pbd-progress"
-              aria-label={
-                isBD
-                  ? `Current Tera-Bright fill: ${fillClamped.toFixed(1)} percent`
-                  : `Position within PBD${label.era}: ${fillClamped.toFixed(1)} percent`
-              }
+              aria-label={`Tera-second progress: ${fillClamped.toFixed(1)} percent`}
             >
               <div
                 className="pbd-progress-fill"
@@ -218,7 +211,7 @@ const LabelDisplay: FC<DisplayProps> = ({
               />
             </div>
             <div className="pbd-progress-caption">
-              <span>{isBD ? "J2000.0" : "start of era"}</span>
+              <span>{isBD ? "J2000.0" : "−1 Tbs"}</span>
               <span>{fillClamped.toFixed(2)}%</span>
               <span>{isBD ? "+1 Tbs" : "J2000.0"}</span>
             </div>
@@ -232,12 +225,12 @@ const LabelDisplay: FC<DisplayProps> = ({
 // ─── Main component ──────────────────────────────────────────────────────────
 
 /**
- * BrightDate / PBD demonstrator.
+ * BrightDate display-label demonstrator.
  *
  * - When given `brightDate` / `value` / `date`, renders a single label card.
  * - Otherwise, drops into **slider mode** so visitors can walk the timeline
  *   from the Big Bang to ~13.8 Gyr in the future and watch the BD ↔ PBD
- *   label flip across J2000.0.
+ *   prefix flip across J2000.0.
  */
 export const PBD: FC<PBDProps> = ({
   brightDate,
@@ -264,10 +257,8 @@ export const PBD: FC<PBDProps> = ({
 
   if (fixed !== undefined) {
     const rawSeconds = fixed.value * SECONDS_PER_DAY;
-    const label = brightDateToLabel(fixed);
     return (
       <LabelDisplay
-        label={label}
         rawSeconds={rawSeconds}
         precision={precision}
         compact={compact}
@@ -276,9 +267,6 @@ export const PBD: FC<PBDProps> = ({
   }
 
   const rawSeconds = sliderToSeconds(sliderT);
-  const label = brightDateToLabel(
-    BrightDate.fromValue(rawSeconds / SECONDS_PER_DAY),
-  );
 
   const applyPreset = (preset: Preset) => {
     const seconds = preset.isToday ? initialNowSeconds : preset.seconds;
@@ -288,7 +276,6 @@ export const PBD: FC<PBDProps> = ({
   return (
     <div className="pbd-interactive">
       <LabelDisplay
-        label={label}
         rawSeconds={rawSeconds}
         precision={precision}
         compact={compact}

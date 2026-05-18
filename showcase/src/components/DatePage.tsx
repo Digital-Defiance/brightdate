@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import Holidays from "date-holidays";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
+import { Link } from "react-router-dom";
 import { BrightDate } from "./BrightDate";
 import { BrightDatePlayground } from "./BrightDatePlayground";
 import { HeroBadge } from "./HeroBadge";
@@ -295,8 +296,15 @@ export const DatePage: FC = () => {
           </p>
           <p className="datepage-text">
             The integer part is the day count. The fractional part is the
-            decimal time of day. For example, 0.5 = noon, 0.25 = 06:00, 0.75 =
-            18:00.
+            elapsed fraction of a BD day, anchored at the J2000.0 epoch
+            instant — not at any civil midnight. There is one universal
+            BD scalar, and one universal fraction; every observer at the
+            same instant sees the same numbers. Local civil time is
+            intentionally outside BrightDate — read it from your platform
+            APIs and put the BD scalar alongside it.{" "}
+            <Link to="/localtime">
+              See how your local clock maps to BD scalars →
+            </Link>
           </p>
           <p className="datepage-text">
             No time zones, no daylight saving, no ambiguity — just one number on

@@ -138,9 +138,18 @@ export function formatWithTimezone(
 /**
  * Get the local time-of-day as a fraction [0, 1) for a given BrightDate and timezone.
  *
- * @param brightDate - BrightDate value (UTC)
- * @param offsetDays - Timezone offset in fractional days
- * @returns Fractional day representing local time-of-day [0, 1)
+ * @deprecated This function returns the fraction of a *BD day* offset by
+ * `offsetDays`, not the fraction of a civil day. The BrightDate "day"
+ * boundary is the J2000.0 anchor instant (`2000-01-01T11:58:55.816Z`), not
+ * any civil midnight, so the result is approximately 12 hours off from any
+ * civil clock. BrightDate is intentionally timezone-free; if you need a
+ * civil-clock fraction at the display edge, use `utcDayFraction(bd)` from
+ * `./civilTime` (UTC only — local time is not modelled in BrightDate). See
+ * the BrightDate specification §2.1.
+ *
+ * @param brightDate - BrightDate value
+ * @param offsetDays - Offset in fractional days
+ * @returns Fractional day on the BD-day grid `[0, 1)`
  */
 export function localTimeOfDay(
   brightDate: BrightDateValue,
@@ -153,11 +162,17 @@ export function localTimeOfDay(
 
 /**
  * Determine if it's "daytime" at a given BrightDate and timezone.
- * Simple approximation: daytime = 6:00 to 18:00 local time.
+ * Simple approximation: daytime = 6:00 to 18:00 on the BD-day grid.
  *
- * @param brightDate - BrightDate value (UTC)
- * @param offsetDays - Timezone offset in fractional days
- * @returns true if local time is between 6:00 and 18:00
+ * @deprecated The window is computed against the BD-day fraction, not the
+ * civil day, so the result drifts ~12 hours from any wall-clock notion of
+ * daytime. BrightDate is intentionally timezone-free; for a civil-time
+ * daytime check, use your platform's calendar APIs to obtain the local
+ * hour and compare against `[6, 18)`. See specification §2.1.
+ *
+ * @param brightDate - BrightDate value
+ * @param offsetDays - Offset in fractional days
+ * @returns true if the BD-day-grid fraction is in `[0.25, 0.75)`
  */
 export function isDaytime(
   brightDate: BrightDateValue,

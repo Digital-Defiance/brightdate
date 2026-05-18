@@ -6,6 +6,7 @@ import Apps from "./components/Apps";
 import BrightSpacetime from "./components/BrightSpacetime";
 import DatePage from "./components/DatePage";
 import Features from "./components/Features";
+import FractionTable from "./components/FractionTable";
 import Hero from "./components/Hero";
 import Install from "./components/Install";
 import PrivacyPolicy from "./components/PrivacyPolicy";
@@ -41,6 +42,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/spacetime" element={<BrightSpacetime />} />
+          <Route path="/localtime" element={<FractionTable />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/support" element={<Support />} />
         </Routes>

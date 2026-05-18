@@ -105,7 +105,12 @@ const Features = () => {
                 <tr>
                   <td>J2000.0 epoch</td>
                   <td className="mono">0</td>
-                  <td>sub-yoctosecond</td>
+                  <td>IEEE 754 sub-normal</td>
+                </tr>
+                <tr>
+                  <td>One day from epoch</td>
+                  <td className="mono">~1</td>
+                  <td>~19 ps</td>
                 </tr>
                 <tr>
                   <td>Current era (~2026)</td>

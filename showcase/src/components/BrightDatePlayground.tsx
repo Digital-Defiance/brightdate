@@ -359,12 +359,11 @@ export const BrightDatePlayground: FC = () => {
         Type a date, set a Year (negative = BCE under ISO 8601 astronomical
         numbering — year <code>0</code> = 1 BC, <code>-2999</code> = 3000 BC),
         or paste a raw BD scalar. They're all views of the same number.
-        Pre-J2000.0 instants auto-flip to{" "}
-        <code>
-          PBD<em>N</em>
-        </code>{" "}
-        labeling. Try <strong>Pyramid of Giza</strong>,{" "}
-        <strong>Voyager 1</strong>, or <code>-1826250</code> directly.
+        Pre-J2000.0 instants display with the <code>PBD</code> prefix on
+        the absolute value (e.g. <code>PBD 11125.154</code> for Apollo 11);
+        the underlying scalar is unchanged. Try{" "}
+        <strong>Pyramid of Giza</strong>, <strong>Voyager 1</strong>, or{" "}
+        <code>-1826250</code> directly.
       </p>
     </div>
   );

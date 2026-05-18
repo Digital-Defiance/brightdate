@@ -1,6 +1,5 @@
 import {
-  BrightDate as BrightDateValue,
-  brightDateToLabel,
+  formatBD,
   fromDate,
   toDate,
 } from "@brightchain/brightdate";
@@ -61,19 +60,9 @@ export const BrightDate: FC<BrightDateProps> = ({
   const brightDateValue = fromDate(now);
   const precision = PRECISION[format];
 
-  // BD for t ≥ 0 (rendered in canonical days). PBDn for t < 0 (rendered as
-  // its era + page in Bright-seconds via brightDateToLabel). There is no PBD0.
-  let display: string;
-  if (brightDateValue >= 0) {
-    display = `BD: ${brightDateValue.toFixed(precision)}`;
-  } else {
-    const label = brightDateToLabel(BrightDateValue.fromValue(brightDateValue));
-    // label.kind === "PBD" by construction (brightDateValue < 0)
-    display =
-      label.kind === "PBD"
-        ? `PBD${label.era}: ${label.page.toFixed(precision)}`
-        : `BD: ${label.seconds.toFixed(precision)}`;
-  }
+  // Display convention: BD for bd ≥ 0, PBD <abs(bd)> for bd < 0. There is
+  // no PBD 0 — formatBD handles that branch for us.
+  const display = formatBD(brightDateValue, precision);
 
   return (
     <time dateTime={now.toISOString()} data-testid="bright-date">

@@ -170,12 +170,14 @@ describe('timezones', () => {
       expect(tod).toBeLessThan(1);
     });
 
-    it('noon fraction (0.5) with UTC+0 offset returns 0.5', () => {
-      // A BrightDate value of 0.5 represents J2000.0 + 12 hours = 2000-01-02
-      // 00:00 UTC (midnight civil-time-of-next-day, i.e. the *next* civil
-      // day starts here because the BrightDate "day" starts at noon).
-      // For localTimeOfDay purposes, 0.5 is simply fraction 0.5 of a day,
-      // which with zero offset maps to 0.5 — civil noon.
+    it('returns BD-day fraction (NOT civil noon) for value 0.5 with UTC+0 offset', () => {
+      // localTimeOfDay returns the fraction of a BD day, where day 0 starts
+      // at the J2000.0 anchor instant (UTC 2000-01-01T11:58:55.816Z) — NOT
+      // at any civil midnight. So `localTimeOfDay(0.5, 0) === 0.5` means
+      // "halfway through a BD day", not "civil noon UTC". For a civil-clock
+      // UTC fraction, use `utcDayFraction` from `../civilTime`. BrightDate
+      // is intentionally timezone-free; local time is not modelled. This
+      // test pins the deprecated behavior so existing callers don't break.
       expect(localTimeOfDay(0.5, 0)).toBeCloseTo(0.5, 8);
     });
 
@@ -188,27 +190,27 @@ describe('timezones', () => {
 
   // ─── isDaytime ───────────────────────────────────────────────────────────
 
-  describe('isDaytime', () => {
-    it('returns true at noon (fraction=0.5)', () => {
-      // 0.5 = 12:00 UTC, with UTC+0 offset
+  describe('isDaytime (deprecated; tests pin BD-day behavior)', () => {
+    // These tests assert isDaytime's BD-day-fraction window of [0.25, 0.75).
+    // They do NOT assert anything about civil-clock noon/midnight — that
+    // is what `civilTime` is for. See the deprecation notice on `isDaytime`.
+    it('returns true at BD-day fraction 0.5', () => {
       expect(isDaytime(0.5, 0)).toBe(true);
     });
 
-    it('returns false at midnight (fraction=0)', () => {
+    it('returns false at BD-day fraction 0', () => {
       expect(isDaytime(0, 0)).toBe(false);
     });
 
-    it('returns true at 6:00 (fraction=0.25)', () => {
+    it('returns true at BD-day fraction 0.25', () => {
       expect(isDaytime(0.25, 0)).toBe(true);
     });
 
-    it('returns false just before 6:00', () => {
-      // 0.249 < 0.25
+    it('returns false just before BD-day fraction 0.25', () => {
       expect(isDaytime(0.249, 0)).toBe(false);
     });
 
-    it('returns false at 18:00 (fraction=0.75)', () => {
-      // isDaytime is [0.25, 0.75) — 0.75 is NOT daytime
+    it('returns false at BD-day fraction 0.75 (exclusive upper bound)', () => {
       expect(isDaytime(0.75, 0)).toBe(false);
     });
   });

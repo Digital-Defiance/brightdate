@@ -8,7 +8,7 @@ import react from "@vitejs/plugin-react";
  * Pages serves them with a 200 (instead of falling back to 404.html with a
  * 404 status). Keep this list in sync with the <Route> entries in App.tsx.
  */
-const SPA_ROUTES = ["spacetime", "privacy", "support"] as const;
+const SPA_ROUTES = ["spacetime", "fraction", "privacy", "support"] as const;
 
 /**
  * Emits dist/404.html as a clone of dist/index.html so GitHub Pages can serve
@@ -43,6 +43,14 @@ export default defineConfig({
         new URL("../src/index.ts", import.meta.url),
       ),
     },
+  },
+  // The alias above points at the local source. The optimizer would
+  // otherwise pre-bundle the installed `node_modules/@brightchain/brightdate`
+  // package and serve a stale copy that doesn't include unreleased helpers
+  // (e.g. `utcDayFraction`). Excluding it from optimizeDeps makes the alias
+  // always win.
+  optimizeDeps: {
+    exclude: ["@brightchain/brightdate"],
   },
   build: {
     outDir: "dist",
