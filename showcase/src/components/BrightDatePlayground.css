@@ -1,0 +1,230 @@
+.bd-playground {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.bd-playground-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.bd-playground-input-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1 1 16rem;
+}
+
+.bd-playground-input-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #888);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.bd-playground-input {
+  font-family: inherit;
+  font-size: 0.95rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary, #eee);
+  color-scheme: dark;
+}
+
+.bd-playground-input:focus-visible {
+  outline: none;
+  border-color: var(--accent-primary, #6dd3fb);
+  box-shadow: 0 0 0 2px rgba(109, 211, 251, 0.25);
+}
+
+.bd-playground-clear {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary, #eee);
+  cursor: pointer;
+}
+
+.bd-playground-clear:disabled {
+  cursor: default;
+  color: var(--accent-success, #00ff88);
+  border-color: rgba(0, 255, 136, 0.35);
+  background: rgba(0, 255, 136, 0.08);
+}
+
+.bd-playground-clear:not(:disabled):hover,
+.bd-playground-clear:not(:disabled):focus-visible {
+  background: rgba(109, 211, 251, 0.12);
+  border-color: var(--accent-primary, #6dd3fb);
+  outline: none;
+}
+
+.bd-playground-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.bd-playground-preset {
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary, #eee);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.bd-playground-preset:hover,
+.bd-playground-preset:focus-visible {
+  background: rgba(0, 255, 136, 0.12);
+  border-color: var(--accent-success, #00ff88);
+  outline: none;
+}
+
+.bd-playground-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.75rem;
+}
+
+.bd-playground-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bd-playground-card time {
+  font-family:
+    "JetBrains Mono", "Fira Code", "Source Code Pro", ui-monospace, monospace;
+  font-size: 1rem;
+  color: var(--accent-success, #00ff88);
+  font-variant-numeric: tabular-nums;
+}
+
+.bd-playground-precision {
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #888);
+}
+
+.bd-playground-wallclock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.55rem 1rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  font-size: 0.85rem;
+}
+
+.bd-playground-wallclock-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #888);
+}
+
+.bd-playground-wallclock-iso {
+  font-family:
+    "JetBrains Mono", "Fira Code", "Source Code Pro", ui-monospace, monospace;
+  color: var(--text-primary, #eee);
+}
+
+.bd-playground-wallclock-zone {
+  color: var(--text-secondary, #888);
+  font-size: 0.8rem;
+}
+
+.bd-playground-note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #aaa);
+}
+
+.bd-playground-note code {
+  color: var(--accent-primary, #6dd3fb);
+}
+
+/* V2 additions: UTC toggle + raw-scalar input. */
+.bd-playground-side-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+.bd-playground-utc-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--text-primary, #eee);
+  user-select: none;
+  cursor: pointer;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.4rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+.bd-playground-utc-toggle input {
+  accent-color: var(--accent-primary, #6dd3fb);
+  margin: 0;
+}
+.bd-playground-input-mono {
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+/* V3 additions: year input + picker-out-of-range hint. */
+.bd-playground-input-wrap--wide {
+  flex: 2 1 18rem;
+  min-width: 14rem;
+}
+.bd-playground-input-wrap--narrow {
+  flex: 0 1 10rem;
+  min-width: 8rem;
+}
+.bd-playground-input-hint {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: var(--text-secondary, #9aa8bf);
+  margin-left: 0.25rem;
+}
+.bd-playground-input-hint code {
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+  font-size: 0.72rem;
+  padding: 0 0.2rem;
+  border-radius: 0.2rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+.bd-playground-picker-oor {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  color: #f4c97a;
+  line-height: 1.3;
+}
+.bd-playground-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

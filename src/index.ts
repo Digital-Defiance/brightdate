@@ -184,6 +184,35 @@ export {
 } from "./serialization";
 export type { SerializedBrightDate } from "./serialization";
 
+// ─── PBD (Pre-BrightDate Eras, Tera-second paging) ───────────────────────────
+export {
+  DEFAULT_BD_PRECISION,
+  DEFAULT_PBD_PRECISION,
+  PBD_ERA_PICOSECONDS,
+  PBD_ERA_SECONDS,
+  brightDateFromPBD,
+  brightDateToLabel,
+  brightDateToPBD,
+  brightInstantFromPBD,
+  brightInstantToPBD,
+  compareExactPBD,
+  comparePBD,
+  formatBrightLabel,
+  formatPBD,
+  fromBrightLabel,
+  fromExactPBD,
+  fromPBD,
+  isPBDLater,
+  parseBrightLabel,
+  parsePBD,
+  pbdEra,
+  pbdPage,
+  toBrightLabel,
+  toExactPBD,
+  toPBD,
+} from "./pbd";
+export type { BrightLabel, ExactPBD, PBD } from "./pbd";
+
 // ─── Timezones ─────────────────────────────────────────────────────────────────
 export {
   TIMEZONE_OFFSETS,

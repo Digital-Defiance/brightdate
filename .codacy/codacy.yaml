@@ -1,5 +1,0 @@
-runtimes:
-    - python@3.11.11
-tools:
-    - opengrep@1.16.4
-.2

@@ -24,6 +24,61 @@
   margin-bottom: 0;
   margin-top: 1rem;
 }
+
+.about-pbd-rules {
+  margin: 0.5rem 0 0.75rem 1.25rem;
+  padding: 0;
+}
+
+.about-pbd-rules li {
+  margin-bottom: 0.6rem;
+  line-height: 1.55;
+}
+
+.about-pbd-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.5rem 0 1rem;
+  font-size: 0.9rem;
+}
+
+.about-pbd-table th,
+.about-pbd-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  vertical-align: top;
+}
+
+.about-pbd-table th {
+  color: var(--text-secondary, #aaa);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.about-pbd-demo {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+  gap: 1rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.about-pbd-demo-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.about-pbd-demo-caption {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #aaa);
+  letter-spacing: 0.02em;
+}
+
+.about-pbd-demo .pbd {
+  min-width: 0;
+  width: 100%;
+}
 .about {
   background: linear-gradient(
     180deg,

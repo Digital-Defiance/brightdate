@@ -175,3 +175,11 @@
     flex: none;
   }
 }
+
+.datepage-playground-intro {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text-secondary, #b8c3d6);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

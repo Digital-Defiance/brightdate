@@ -1,4 +1,9 @@
-import { fromDate, toDate } from "@brightchain/brightdate";
+import {
+  BrightDate as BrightDateValue,
+  brightDateToLabel,
+  fromDate,
+  toDate,
+} from "@brightchain/brightdate";
 import { FC, useEffect, useMemo, useState } from "react";
 
 export interface BrightDateProps {
@@ -54,11 +59,25 @@ export const BrightDate: FC<BrightDateProps> = ({
   }, [interval, resolvedDate]);
 
   const brightDateValue = fromDate(now);
-  const brightDate = brightDateValue.toFixed(PRECISION[format]);
+  const precision = PRECISION[format];
+
+  // BD for t ≥ 0 (rendered in canonical days). PBDn for t < 0 (rendered as
+  // its era + page in Bright-seconds via brightDateToLabel). There is no PBD0.
+  let display: string;
+  if (brightDateValue >= 0) {
+    display = `BD: ${brightDateValue.toFixed(precision)}`;
+  } else {
+    const label = brightDateToLabel(BrightDateValue.fromValue(brightDateValue));
+    // label.kind === "PBD" by construction (brightDateValue < 0)
+    display =
+      label.kind === "PBD"
+        ? `PBD${label.era}: ${label.page.toFixed(precision)}`
+        : `BD: ${label.seconds.toFixed(precision)}`;
+  }
 
   return (
     <time dateTime={now.toISOString()} data-testid="bright-date">
-      {`BD: ${brightDate}`}
+      {display}
     </time>
   );
 };

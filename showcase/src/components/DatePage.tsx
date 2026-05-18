@@ -15,6 +15,7 @@ import Holidays from "date-holidays";
 import { FC, useEffect, useMemo, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { BrightDate } from "./BrightDate";
+import { BrightDatePlayground } from "./BrightDatePlayground";
 import { HeroBadge } from "./HeroBadge";
 import BrightDateIcon from "./BrightDateIcon";
 import "./DatePage.css";
@@ -205,6 +206,21 @@ export const DatePage: FC = () => {
             {" · "}
             {now.toLocaleTimeString()}
           </p>
+        </motion.div>
+
+        {/* Interactive playground */}
+        <motion.div
+          className="datepage-card"
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.15, duration: 0.6 }}
+        >
+          <h3 className="datepage-card-title">Try It — Any Moment, Any Form</h3>
+          <p className="datepage-playground-intro">
+            Pick a date, type a raw BD scalar, or jump to a preset. The picker
+            and the scalar are two views of the same number.
+          </p>
+          <BrightDatePlayground />
         </motion.div>
 
         {/* Holidays */}

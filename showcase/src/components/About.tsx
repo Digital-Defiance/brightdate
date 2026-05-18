@@ -14,6 +14,7 @@ import "./About.css";
 import { faStarship } from "@awesome.me/kit-a20d532681/icons/classic/regular";
 import BrightDateIcon from "./BrightDateIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { PBD } from "./PBD";
 
 const About = () => {
   const [ref, inView] = useInView({
@@ -97,6 +98,268 @@ const About = () => {
             <p className="highlight-text">
               <FaCode /> <strong>100% Open Source.</strong> MIT licensed. Freely
               available, forever.
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="about-main card"
+            style={{ marginTop: "1.5rem" }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 0.25, duration: 0.6 }}
+          >
+            <h3 className="about-heading">
+              <FaCode /> PBD — Pre-BrightDate Eras
+            </h3>
+            <p>
+              BrightDate is anchored at J2000.0, so anything before{" "}
+              <code>2000-01-01T11:58:55.816Z</code> is mathematically a negative
+              scalar. Negatives are fine for the CPU, but they are a usability
+              footgun — sign flips, off-by-one bugs in formatters, and "is&nbsp;
+              <code>−2.5×10¹²</code> before or after <code>−1.4×10¹²</code>?"
+              confusion at deep-time scales.
+            </p>
+            <p>
+              Instead of an unbounded negative line, BrightDate{" "}
+              <strong>pages</strong> the pre-epoch timeline into{" "}
+              <strong>Tera-second blocks</strong> (10¹² SI&nbsp;seconds ≈ 31,710
+              Julian years each) called <strong>PBD eras</strong> (
+              <em>Pre-BrightDate, era N</em>). The first step past J2000.0
+              enters <code>PBD1</code>; each further Tera-second backward bumps
+              the era index by one.{" "}
+              <strong>
+                All of recorded human history (3000 BC to now) sits inside{" "}
+                <code>PBD1</code>.
+              </strong>{" "}
+              The Big Bang lands somewhere around <code>PBD435,000</code> —
+              still well inside <code>Number.MAX_SAFE_INTEGER</code>, no
+              floating-point heroics required.
+            </p>
+            <p>
+              The current era — J2000.0 and everything after it — is
+              <em>not</em> paged. It stays a plain signed{" "}
+              <strong>BD scalar</strong>. There is no <code>PBD0</code>: the
+              “Pre-” in PBD would be a contradiction. BD covers the future
+              forever; PBD<em>N</em> (with <code>N ≥ 1</code>) labels the past
+              in human-friendly Tera-Bright chunks.
+            </p>
+            <h4 className="about-glob-heading">
+              SI-Metric alignment — the Tera-Bright
+            </h4>
+            <p>
+              PBD math is done in <strong>Bright-seconds (bs)</strong>, where
+              one bs equals one SI second — the same canonical unit shared with{" "}
+              <strong>BrightSpacetime</strong> and{" "}
+              <strong>BrightInstant</strong>. One <strong>Tera-Bright</strong> (
+              <code>1&nbsp;Ts</code>) is simultaneously:
+            </p>
+            <ul className="about-pbd-rules">
+              <li>
+                <strong>Time:</strong>{" "}
+                <code>10¹²&nbsp;s ≈ 31,710 Julian years</code> — exactly one PBD
+                page.
+              </li>
+              <li>
+                <strong>Distance:</strong>{" "}
+                <code>1&nbsp;Tera-light-second ≈ 0.0317&nbsp;ly</code> — the
+                volume of space light fills in one Tera-second.
+              </li>
+            </ul>
+            <p>
+              Because the same SI prefix lineage governs both axes, a{" "}
+              <code>PBDN</code> label isn't a random bucket — it's a{" "}
+              <strong>Giga-light-second volume of history</strong>: 10¹² seconds
+              long, 10¹² light-seconds wide, anchored to the same
+              <code>&nbsp;J2000.0</code> zero point used by BrightSpacetime.
+            </p>
+            <h4 className="about-glob-heading">
+              Dual-mode standard — scalar for machines, PBD for humans
+            </h4>
+            <p>
+              The same way latitude is always a signed float at the machine
+              level (<code>−122.23</code>) but a directional suffix in print (
+              <code>122.23°&nbsp;W</code>), BrightDate keeps two interoperable
+              views of the same instant.{" "}
+              <strong>The signed scalar is canonical and always valid.</strong>{" "}
+              PBD is purely a human-readable layer.
+            </p>
+            <table className="about-pbd-table">
+              <thead>
+                <tr>
+                  <th>Mode</th>
+                  <th>Format</th>
+                  <th>Use case</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <strong>Scalar</strong> (canonical)
+                  </td>
+                  <td>
+                    <code>−1,826,250&nbsp;BD</code> (days)
+                  </td>
+                  <td>
+                    APIs, databases, physics, logic, sort keys, deltas — plain
+                    subtraction works
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Label</strong> (BD / PBD)
+                  </td>
+                  <td>
+                    <code>9,635&nbsp;BD</code> or{" "}
+                    <code>PBD1:&nbsp;842000000000.000</code>
+                  </td>
+                  <td>
+                    UI, history books, conversation, labels, indexes — library
+                    unfolds to scalar before doing math
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              If you only need the math, keep using the signed scalar. Negative
+              BrightDate values are first-class and will remain so forever. If a
+              downstream system has never heard of PBD, it still receives a
+              perfectly valid signed Float64 —{" "}
+              <strong>graceful degradation by construction</strong>.
+            </p>
+            <pre className="about-pre">
+              <code>{`Let  T = 1,000,000,000,000 s  (one Tera-Bright ≈ 31,710 years)
+
+BD    →  raw [    0, +∞)              J2000.0 → forever        (plain scalar)
+PBD1  →  raw (   −T,  0)              ~29,710 BC → J2000.0
+PBD2  →  raw (  −2T, −T]              ~61,420 BC → ~29,710 BC
+PBDN  →  raw (−N·T, −(N−1)·T]         ~31,710 years per page  (N ≥ 1)
+
+pageValue   = rawSeconds + N · T     // always in (0, T]
+rawSeconds  = pageValue   − N · T    // perfectly lossless`}</code>
+            </pre>
+            <h4 className="about-glob-heading">
+              The Zero-Point Handshake — keeping the math pure
+            </h4>
+            <p>
+              The canonical representation is <strong>always</strong> the signed
+              scalar. The <code>(era, page)</code> tuple is generated at format
+              time and parsed at input time — exactly the way Unix timestamps
+              relate to <code>toISOString()</code>.
+            </p>
+            <p>Three rules keep deltas honest:</p>
+            <ol className="about-pbd-rules">
+              <li>
+                <strong>
+                  One timeline, always increasing toward the future.
+                </strong>{" "}
+                Within <em>any</em> era, a larger page value is <em>later</em>.
+                In <code>PBD1</code>, page <code>999,999,999,999</code> is one
+                second before J2000.0 (raw <code>−1</code>); page <code>1</code>{" "}
+                is almost a full Tera-second before J2000.0. Numbers do{" "}
+                <em>not</em> count backwards in pre-epoch eras — this is the
+                opposite of BC labeling, and the reason BC dates break every
+                library that touches them.
+              </li>
+              <li>
+                <strong>Boundaries are half-open with closed upper.</strong>{" "}
+                <code>BD&nbsp;=&nbsp;[0,&nbsp;+∞)</code>,{" "}
+                <code>PBD1&nbsp;=&nbsp;(−T,&nbsp;0)</code>,{" "}
+                <code>PBDN&nbsp;=&nbsp;(−N·T,&nbsp;−(N−1)·T]</code>. The exact
+                boundary <code>−k·T</code> is the <em>last instant</em> of{" "}
+                <code>PBD(k+1)</code> (page&nbsp;<code>T</code>). Exactly one
+                canonical label for every scalar — no “Year Zero” ambiguity.
+              </li>
+              <li>
+                <strong>Deltas use the scalar, not the page.</strong>{" "}
+                <code>Δt = raw_a − raw_b</code>. <em>Never</em>{" "}
+                <code>pageA − pageB</code> — subtracting page values across an
+                era boundary silently drops a Tera-second jump.
+              </li>
+            </ol>
+            <p>
+              The corollary you have to be comfortable with:{" "}
+              <strong>
+                PBD<em>N</em> values sit “lower on the timeline” than BD values
+              </strong>{" "}
+              even though their page numbers can look enormous. Comparing{" "}
+              <code>PBD1:&nbsp;999,999,999,999</code> to <code>1&nbsp;BD</code>{" "}
+              resolves to <code>PBD1 &lt; BD</code> — because{" "}
+              <code>−1 &lt; 1</code>. Sort ascending by time = BD first, then
+              PBD by era <em>descending</em>, then page <em>ascending</em>.
+            </p>
+            <pre className="about-pre">
+              <code>{`import { toBrightLabel, fromBrightLabel, brightDateToLabel } from "@brightchain/brightdate";
+
+// Unified label: BD for t ≥ 0, PBD for t < 0.
+toBrightLabel(0)                    // { kind: "BD",  seconds: 0 }
+toBrightLabel(1)                    // { kind: "BD",  seconds: 1 }
+toBrightLabel(-1)                   // { kind: "PBD", era: 1, page: 999_999_999_999 }
+toBrightLabel(-1_000_000_000_000)   // { kind: "PBD", era: 2, page: 1_000_000_000_000 }
+
+// 3000 BC ≈ -5000 Julian years × 31,557,600 s
+toBrightLabel(-157_788_000_000)     // { kind: "PBD", era: 1, page: ≈ 842_212_000_000 }
+
+fromBrightLabel({ kind: "PBD", era: 1, page: 999_999_999_999 })  // -1
+
+// BrightDate (days) → label is wired up for you
+brightDateToLabel(BrightDate.fromValue(-1_826_250))
+// → { kind: "PBD", era: 1, page: ≈ 842_212_000_000 }
+
+// Comparison across the BD/PBD divide
+function isLater(a, b) {
+  if (a.kind !== b.kind) return a.kind === "BD";        // any BD > any PBD
+  if (a.kind === "BD") return a.seconds > b.seconds;
+  if (a.era !== b.era) return a.era < b.era;            // smaller era = later
+  return a.page > b.page;                                // within era, larger = later
+}`}</code>
+            </pre>
+
+            <h4 className="about-glob-heading">
+              Live demo — walk 27.6 billion years on a single slider
+            </h4>
+            <p>
+              The slider is signed-log around <strong>J2000.0</strong>: drag
+              left into the past, right into the future. Watch the label flip
+              between <code>BD</code> (current era) and{" "}
+              <code>
+                PBD<em>N</em>
+              </code>{" "}
+              (paged past), and the era index climb as you cross each
+              Tera-Bright boundary. Preset buttons jump to canonical anchors.
+            </p>
+            <div className="about-pbd-demo">
+              <div className="about-pbd-demo-item">
+                <span className="about-pbd-demo-caption">
+                  Interactive — drag the slider
+                </span>
+                <PBD />
+              </div>
+              <div className="about-pbd-demo-item">
+                <span className="about-pbd-demo-caption">
+                  ~3000 BC — start of recorded history
+                </span>
+                <PBD value={-1_835_946} />
+              </div>
+              <div className="about-pbd-demo-item">
+                <span className="about-pbd-demo-caption">
+                  ~66 Myr ago — K–Pg extinction
+                </span>
+                <PBD value={-24_106_500_000} />
+              </div>
+              <div className="about-pbd-demo-item">
+                <span className="about-pbd-demo-caption">
+                  ~13.8 Gyr ago — the Big Bang
+                </span>
+                <PBD value={-5_040_450_000_000} />
+              </div>
+            </div>
+
+            <p className="about-bsh-challenge">
+              <strong>Status:</strong> PBD-N ships in the next minor release
+              with full <code>toPBD</code> / <code>fromPBD</code> /{" "}
+              <code>toExactPBD</code> (BigInt picosecond) support and the{" "}
+              <code>pbd</code> serialization key. The signed scalar remains
+              canonical — PBD is an additional view, never a replacement.
             </p>
           </motion.div>
 
