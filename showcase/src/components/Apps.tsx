@@ -64,6 +64,20 @@ const APPS: AppEntry[] = [
     zoom: "/apps/android-widget-screenshot.png",
   },
   {
+    id: "localtime-widget",
+    name: "Android Local Time Widget",
+    headline: "Your Local Clock as BrightDate",
+    description:
+      "This widget shows what BrightDate value your clock produces at each local hour today, so you can start associating wall-clock times with the BD scalar.",
+    png: "/apps/anndroid-localtime-widget-feature-graphic.png",
+    svg: "/apps/android-localtime-widget-feature-graphic.svg",
+    repoUrl:
+      "https://github.com/Digital-Defiance/brightdate-android-localtime-widget",
+    googlePlayUrl:
+      "https://play.google.com/store/apps/details?id=org.digitaldefiance.brightdate.widget.localtime",
+    zoom: "/apps/android-localtime-widget-screenshot.png",
+  },
+  {
     id: "alarm",
     name: "Android Alarm Clock",
     headline: "Schedule in BrightDate",
@@ -134,7 +148,7 @@ const Apps = () => {
           BrightDate <span className="gradient-text">Apps</span>
         </h2>
         <p className="apps-subtitle">
-          Four production Android experiences built around the same universal
+          Five production Android experiences built around the same universal
           time model.
         </p>
         <p className="apps-subtitle">

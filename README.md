@@ -218,16 +218,19 @@ A `BrightDate` value is a Float64, so the distance to the next representable val
 ### When the 0.00012 ms round-trip tax appears
 
 ```typescript
-// Day-aligned inputs (multiples of 86_400_000 from J2000 anchor) round-trip exactly:
-fromUnixMs(0).toUnixMs()                === 0;              // Unix epoch: ✅
-fromUnixMs(946_728_000_000).toUnixMs() === 946_728_000_000; // J2000:     ✅
+// Several common integer-ms inputs round-trip exactly because the library
+// routes them through exact-integer paths:
+fromUnixMs(0).toUnixMs()                 === 0;                 // Unix epoch: ✅
+fromUnixMs(946_727_935_816).toUnixMs()   === 946_727_935_816;   // J2000.0 UTC label: ✅
+fromUnixMs(946_728_000_000).toUnixMs()   === 946_728_000_000;   // TT noon: ✅
+fromUnixMs(1_700_000_000_000).toUnixMs() === 1_700_000_000_000; // ✅
 
-// Off-day inputs gain a bounded error (~2^-52 × 946 728 000 000 ≈ 0.00012 ms):
+// Arbitrary inputs gain a bounded error (~2^-52 × magnitude ≈ 0.00012 ms):
 const ms = 1_700_000_000_123;
-Math.abs(fromUnixMs(ms).toUnixMs() - ms) < 0.001;           // true (≈1.2e-4)
+Math.abs(fromUnixMs(ms).toUnixMs() - ms) < 0.001;               // true (≈1.2e-4)
 ```
 
-If your system can tolerate sub-microsecond error at the Unix-ms boundary, use `BrightDate`. If it cannot — e.g., a blockchain that stores user-supplied Unix ms and must return them byte-identical — use `ExactBrightDate`.
+If your system can tolerate sub-microsecond error at the Unix-ms boundary, use `BrightDate`. If it cannot — e.g., a blockchain that stores user-supplied Unix ms and must return them byte-identical — use `ExactBrightDate`, which round-trips bit-exactly for every integer Unix-ms input by construction.
 
 ### Float64 algebraic identities — limits
 
