@@ -51,12 +51,12 @@ const PRODUCTS = [
 const PrivacyPolicy = () => {
   return (
     <section className="privacy section" id="privacy">
-      <title>Privacy Policy - BrightDate</title>
+      <title>Privacy Policy</title>
       <meta
         name="description"
-        content="Privacy Policy for BrightDate, bsh (zsh BrightShell port), and the WearOS Watch Face by Digital Defiance. None of these products collect any data."
+        content="Privacy Policy for BrightDate, bsh (zsh BrightShell port), the Android widgets, watch face, and the Apple/IOS widgets and apps by Digital Defiance. None of these products collect any data."
       />
-      <meta property="og:title" content="Privacy Policy - BrightDate" />
+      <meta property="og:title" content="Privacy Policy" />
       <meta
         property="og:description"
         content="Privacy Policy for BrightDate, bsh, and the WearOS Watch Face. No data is collected."

@@ -196,7 +196,7 @@ describe("hardening", () => {
       const fakeDate = Object.create(Date.prototype);
       Object.defineProperty(fakeDate, Symbol.toStringTag, { value: "Date" });
       // Give it a real getTime
-      fakeDate.getTime = () => 946_728_000_000; // J2000.0
+      fakeDate.getTime = () => 946_728_000_000; // arbitrary instant (TT noon, not J2000.0 — comment kept for clarity)
       // Force Object.prototype.toString.call(fakeDate) === '[object Date]'
       // by making this a true Date subclass-like object. The cleanest way
       // to test cross-realm safety without spinning up a vm context is to
