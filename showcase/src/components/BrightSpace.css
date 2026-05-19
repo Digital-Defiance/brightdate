@@ -1,0 +1,1134 @@
+/* ─── BrightSpace page ─────────────────────────────────────────── */
+.space {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.space-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(0, 255, 136, 0.10) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.space-container {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem 4rem;
+}
+
+/* ─── Header ───────────────────────────────────────────────────── */
+.space-back {
+  display: block;
+  width: fit-content;
+  margin: 0 0 1.5rem;
+  text-align: left;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+}
+
+.space-back:hover {
+  color: var(--accent-primary);
+}
+
+.space-header {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.space-title {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 1.5rem 0 1rem;
+  line-height: 1.05;
+}
+
+.space-subtitle {
+  color: var(--text-secondary);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 400;
+  max-width: 720px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.space-paper-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  padding: 0.55rem 1.2rem;
+  border: 1px solid var(--accent-primary, #00ff88);
+  border-radius: 999px;
+  color: var(--accent-primary, #00ff88);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.space-paper-link:hover {
+  transform: translateY(-2px);
+  background: rgba(0, 255, 136, 0.08);
+}
+
+/* ─── Generic section ──────────────────────────────────────────── */
+.space-section {
+  margin-bottom: 3.5rem;
+}
+
+.space-section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.space-section-lead {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.space-card {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ─── Hero "Earth as volume" block ─────────────────────────────── */
+.space-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .space-hero-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+.space-hero-body {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.space-hero-body strong {
+  color: var(--text-primary);
+}
+
+.space-hero-card {
+  background: rgba(0, 255, 136, 0.06);
+  border: 2px solid rgba(0, 255, 136, 0.3);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+
+.space-hero-glyph {
+  font-family: monospace;
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  font-weight: 700;
+  color: var(--accent-primary);
+  line-height: 1.2;
+}
+
+.space-hero-defn {
+  margin-top: 1rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.space-hero-note {
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+/* ─── Comparison table (BrightSpace vs WGS84) ─────────────────── */
+.space-table-wrap {
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(17, 24, 39, 0.6);
+}
+
+.space-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.space-table thead tr {
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.space-table th {
+  padding: 1.25rem 1.5rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.space-table tbody tr {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s ease;
+}
+
+.space-table tbody tr:hover {
+  background: rgba(0, 153, 255, 0.05);
+}
+
+.space-table td {
+  padding: 1rem 1.5rem;
+  vertical-align: top;
+  font-size: 0.9rem;
+}
+
+.space-table td:first-child {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.space-table td.is-legacy {
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.space-table td.is-bright {
+  color: var(--accent-primary);
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.space-table-caption {
+  text-align: center;
+  color: var(--text-secondary);
+  font-family: monospace;
+  font-size: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+/* ─── Scale-of-things cards (nbm / μbm / mbm) ─────────────────── */
+.space-scale-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .space-scale-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.space-scale-card {
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.8) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+}
+
+.space-scale-symbol {
+  font-family: monospace;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  line-height: 1;
+}
+
+.space-scale-name {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.4rem;
+}
+
+.space-scale-value {
+  color: var(--accent-secondary);
+  font-family: monospace;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.space-scale-tag {
+  display: inline-block;
+  margin: 0.85rem 0 0.6rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  color: var(--accent-primary);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.space-scale-card p {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ─── Live ECEF → BrightSpace converter ───────────────────────── */
+.space-label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.space-ecef-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+@media (min-width: 540px) {
+  .space-ecef-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.space-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: var(--accent-secondary);
+  transition: border-color 0.2s ease;
+}
+
+.space-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.space-pill-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .space-pill-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.space-pill {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+}
+
+.space-pill.is-highlight {
+  background: rgba(0, 255, 136, 0.08);
+  border-color: rgba(0, 255, 136, 0.4);
+}
+
+.space-pill-label {
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.space-pill-value {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-top: 0.25rem;
+  word-break: break-all;
+}
+
+.space-pill.is-highlight .space-pill-value {
+  color: var(--accent-primary);
+}
+
+.space-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.space-preset {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.space-preset:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* ─── Distance bounding example ────────────────────────────────── */
+.space-bounding-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .space-bounding-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.space-bounding-col h3 {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.space-bounding-col.is-bright h3 {
+  color: var(--accent-primary);
+}
+
+.space-bounding-pre {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 1rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+.space-bounding-col.is-bright .space-bounding-pre {
+  color: var(--accent-primary);
+  background: rgba(0, 255, 136, 0.06);
+  border-color: rgba(0, 255, 136, 0.2);
+}
+
+.space-bounding-footnote {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin-top: 1.5rem;
+}
+
+.space-bounding-footnote code {
+  font-family: monospace;
+  color: var(--accent-secondary);
+  background: rgba(0, 153, 255, 0.08);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* ─── ITRF / GODE worked example ──────────────────────────────── */
+.space-itrf-pre {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--accent-secondary);
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(0, 153, 255, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin: 0;
+}
+
+/* ─── Why this matters ─────────────────────────────────────────── */
+.space-why-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .space-why-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.space-why-card {
+  background: linear-gradient(
+    180deg,
+    rgba(17, 24, 39, 0.8) 0%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 1.5rem;
+}
+
+.space-why-card h3 {
+  color: var(--accent-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.space-why-card p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.space-why-card em {
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+/* ─── 4D Spacetime Vector example ─────────────────────────────── */
+.space-vector-card {
+  background: rgba(0, 153, 255, 0.05);
+  border: 1px solid rgba(0, 153, 255, 0.25);
+  border-radius: 14px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.space-vector-pre {
+  font-family: monospace;
+  font-size: 0.95rem;
+  color: var(--accent-secondary);
+  margin: 0.75rem 0 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* ─── Footer ───────────────────────────────────────────────────── */
+.space-footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+}
+
+.space-footer a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+.space-footer a:hover {
+  color: var(--accent-secondary);
+}
+
+/* ─── GPS converter: dual-point lat/lng inputs ────────────────── */
+.space-gps-points {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .space-gps-points {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.space-gps-point {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.space-gps-point-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.space-gps-point-title h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--accent-primary);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.space-gps-point-tag {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.space-gps-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.space-gps-fields label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.25rem;
+}
+
+.space-gps-fields .space-input {
+  font-size: 0.9rem;
+  padding: 0.6rem 0.75rem;
+}
+
+.space-gps-ecef {
+  margin-top: 0.85rem;
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: var(--accent-secondary);
+  background: rgba(0, 153, 255, 0.06);
+  border: 1px solid rgba(0, 153, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.65rem 0.8rem;
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.space-gps-ecef-label {
+  color: var(--text-secondary);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.3rem;
+}
+
+/* ─── Distance comparison panel ──────────────────────────────── */
+.space-distance-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .space-distance-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.space-distance-card {
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.space-distance-card.is-chord {
+  border-color: rgba(0, 255, 136, 0.4);
+  background: rgba(0, 255, 136, 0.06);
+}
+
+.space-distance-card.is-surface {
+  border-color: rgba(0, 153, 255, 0.3);
+  background: rgba(0, 153, 255, 0.05);
+}
+
+.space-distance-eyebrow {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.space-distance-card.is-chord .space-distance-eyebrow {
+  color: var(--accent-primary);
+}
+
+.space-distance-card.is-surface .space-distance-eyebrow {
+  color: var(--accent-secondary);
+}
+
+.space-distance-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+}
+
+.space-distance-primary {
+  font-family: monospace;
+  font-size: 1.4rem;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.space-distance-card.is-chord .space-distance-primary {
+  color: var(--accent-primary);
+}
+
+.space-distance-card.is-surface .space-distance-primary {
+  color: var(--accent-secondary);
+}
+
+.space-distance-secondary {
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.65rem;
+}
+
+.space-distance-body {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  margin: 0;
+}
+
+.space-distance-body em {
+  color: var(--text-primary);
+  font-style: italic;
+}
+
+.space-distance-gap {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.space-distance-gap code {
+  font-family: monospace;
+  color: var(--accent-primary);
+  background: rgba(0, 255, 136, 0.08);
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* ─── BrightSpace-vector distance: two ECEF vectors directly ──── */
+.space-vector-inputs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .space-vector-inputs {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.space-vector-pane {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.space-vector-pane-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.space-vector-pane-title h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--accent-primary);
+  font-weight: 700;
+}
+
+.space-vector-pane-tag {
+  font-family: monospace;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.space-vector-fields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+}
+
+.space-vector-fields label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.25rem;
+}
+
+.space-vector-fields .space-input {
+  font-size: 0.85rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.space-vector-mag {
+  margin-top: 0.85rem;
+  font-family: monospace;
+  font-size: 0.78rem;
+  color: var(--accent-secondary);
+  background: rgba(0, 153, 255, 0.06);
+  border: 1px solid rgba(0, 153, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  line-height: 1.55;
+}
+
+.space-vector-mag-label {
+  color: var(--text-secondary);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.25rem;
+}
+
+.space-trio-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .space-trio-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ─── Equatorial-plane interactive view ──────────────────────── */
+.space-plane {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1rem 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  max-width: 360px;
+}
+
+.space-plane-svg {
+  width: 100%;
+  height: auto;
+  max-width: 320px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.space-plane-disk {
+  fill: rgba(0, 153, 255, 0.04);
+  stroke: rgba(0, 153, 255, 0.45);
+  stroke-width: 1.5;
+}
+
+.space-plane-grid {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 0.75;
+}
+
+.space-plane-meridian {
+  stroke: rgba(255, 255, 255, 0.06);
+  stroke-width: 0.6;
+}
+
+.space-plane-axis-label {
+  fill: var(--text-secondary);
+  font-family: monospace;
+  font-size: 9px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.space-plane-pole {
+  fill: var(--text-secondary);
+  font-family: monospace;
+  font-size: 8px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.space-plane-chord {
+  stroke: var(--accent-primary, #00ff88);
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+  fill: none;
+  pointer-events: none;
+}
+
+.space-plane-marker {
+  cursor: grab;
+  transition: filter 0.15s ease;
+}
+
+.space-plane-marker:hover,
+.space-plane-marker.is-dragging {
+  filter: drop-shadow(0 0 6px currentColor);
+  cursor: grabbing;
+}
+
+.space-plane-marker-a {
+  fill: #00ff88;
+  color: #00ff88;
+}
+
+.space-plane-marker-b {
+  fill: #0099ff;
+  color: #0099ff;
+}
+
+.space-plane-marker-ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.space-plane-marker-label {
+  fill: var(--text-primary);
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.85);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+
+.space-plane-caption {
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.space-plane-caption code {
+  font-family: monospace;
+  color: var(--accent-secondary);
+}
+
+.space-plane-hint {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* ─── Altitude slider (re-styled from BrightSpacetime patterns) ── */
+.space-slider {
+  width: 100%;
+  accent-color: var(--accent-primary);
+}
+
+.space-slider-readout {
+  font-family: monospace;
+  color: var(--accent-primary);
+  font-size: 1rem;
+  margin-left: 0.5rem;
+}
+
+/* ─── bping / bright-iputils audit panel ──────────────────────── */
+.space-ping-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .space-ping-grid {
+    grid-template-columns: 1fr 1.2fr;
+  }
+}
+
+.space-ping-form {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.25rem;
+}
+
+.space-ping-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+}
+
+.space-ping-form-row label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.25rem;
+}
+
+.space-ping-output {
+  background: #050a08;
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #c8f7e2;
+  position: relative;
+  overflow-x: auto;
+}
+
+.space-ping-output::before {
+  content: "$ bping " attr(data-target);
+  display: block;
+  color: rgba(0, 255, 136, 0.75);
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.02em;
+}
+
+.space-ping-line {
+  white-space: pre;
+}
+
+.space-ping-line .space-ping-key {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.space-ping-line .space-ping-val {
+  color: var(--accent-primary, #00ff88);
+  font-weight: 600;
+}
+
+.space-ping-line.is-warn .space-ping-val {
+  color: #ffb347;
+}
+
+.space-ping-line.is-impossible .space-ping-val {
+  color: #ff5c7c;
+}
+
+.space-ping-verdict {
+  display: inline-block;
+  margin-top: 0.85rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  background: rgba(0, 255, 136, 0.12);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  color: var(--accent-primary, #00ff88);
+}
+
+.space-ping-verdict.is-warn {
+  background: rgba(255, 179, 71, 0.1);
+  border-color: rgba(255, 179, 71, 0.4);
+  color: #ffb347;
+}
+
+.space-ping-verdict.is-impossible {
+  background: rgba(255, 92, 124, 0.12);
+  border-color: rgba(255, 92, 124, 0.45);
+  color: #ff5c7c;
+}
+
+.space-tools-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 540px) {
+  .space-tools-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.space-tool-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.85rem 1rem;
+}
+
+.space-tool-card code {
+  color: var(--accent-primary, #00ff88);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.space-tool-card p {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}

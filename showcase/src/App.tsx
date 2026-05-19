@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import About from "./components/About";
 import Apps from "./components/Apps";
+import BrightSpace from "./components/BrightSpace";
 import BrightSpacetime from "./components/BrightSpacetime";
 import DatePage from "./components/DatePage";
 import Features from "./components/Features";
@@ -11,6 +12,7 @@ import Hero from "./components/Hero";
 import Install from "./components/Install";
 import PrivacyPolicy from "./components/PrivacyPolicy";
 import SpacetimePromo from "./components/SpacetimePromo";
+import SpacePromo from "./components/SpacePromo";
 import Support from "./components/Support";
 
 function Home() {
@@ -29,6 +31,7 @@ function Home() {
       <Install />
       <Apps />
       <DatePage />
+      <SpacePromo />
       <SpacetimePromo />
       <About />
     </>
@@ -41,6 +44,7 @@ function App() {
       <div className="app">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/space" element={<BrightSpace />} />
           <Route path="/spacetime" element={<BrightSpacetime />} />
           <Route path="/localtime" element={<FractionTable />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />

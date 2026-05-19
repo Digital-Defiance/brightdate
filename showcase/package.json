@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@awesome.me/kit-a20d532681": "^1.0.23",
-    "@brightchain/brightdate": "^0.34.0",
+    "@brightchain/brightdate": "^0.36.0",
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/react-fontawesome": "^3.3.1",
     "date-holidays": "^3.28.0",

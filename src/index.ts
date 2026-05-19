@@ -296,6 +296,34 @@ export {
 } from "./spacetime";
 export type { BrightUnit } from "./spacetime";
 
+// ─── Geodesy (BrightSpace ECEF / WGS84) ────────────────────────────────────────
+export {
+  EARTH_MEAN_RADIUS_M,
+  WGS84_FIRST_ECCENTRICITY_SQUARED,
+  WGS84_FLATTENING,
+  WGS84_INVERSE_FLATTENING,
+  WGS84_SEMI_MAJOR_AXIS_M,
+  WGS84_SEMI_MINOR_AXIS_M,
+  brightSpaceDistance,
+  ecefArcMetres,
+  ecefArcMetresAtRadius,
+  ecefCentralAngle,
+  ecefChordBrightMeters,
+  ecefChordMetres,
+  ecefMagnitude,
+  ecefToGeodetic,
+  geodeticToEcef,
+  gpsDistance,
+  lightTravelTimeSeconds,
+  surfaceDistanceMetres,
+} from "./geodesy";
+export type {
+  BrightSpaceDistance,
+  DistancePair,
+  EcefCoordinate,
+  GeodeticCoordinate,
+} from "./geodesy";
+
 // ─── Relativity (Minkowski / Lorentz) ─────────────────────────────────────────
 export {
   addVelocities,
