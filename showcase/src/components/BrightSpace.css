@@ -305,7 +305,34 @@
   margin: 0;
 }
 
-/* ─── Live ECEF → BrightSpace converter ───────────────────────── */
+/* ─── Live ECEF ↔ BrightSpace converter ───────────────────────── */
+.space-convert-modes {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+}
+
+.space-convert-mirror {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-family: monospace;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.space-convert-mirror-label {
+  display: inline-block;
+  min-width: 5.5rem;
+  color: var(--text-secondary);
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-right: 0.5rem;
+}
+
 .space-label {
   display: block;
   color: var(--text-secondary);

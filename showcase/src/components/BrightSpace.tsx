@@ -11,6 +11,7 @@ import {
   BRIGHT_METER_M,
   EARTH_MEAN_RADIUS_M,
   SPEED_OF_LIGHT_M_PER_S,
+  brightMetersToMetres,
   ecefToGeodetic,
   fromDate,
   geodeticToEcef,
@@ -34,6 +35,19 @@ const GODE_ITRF2020 = {
   velocityMPerYr: { x: -0.01521, y: 0.00026, z: 0.00226 },
   sigmaM: { x: 0.0007, y: 0.0009, z: 0.0008 },
 } as const;
+
+const GODE_GEODETIC = ecefToGeodetic(GODE_ITRF2020.positionM);
+
+type EcefInputMode = "metres" | "brightMeters" | "geodetic";
+
+const ECEF_INPUT_MODES: ReadonlyArray<{
+  id: EcefInputMode;
+  label: string;
+}> = [
+  { id: "metres", label: "ECEF (m)" },
+  { id: "brightMeters", label: "ECEF (bm)" },
+  { id: "geodetic", label: "WGS84 (φ, λ, h)" },
+];
 
 // GRS80/WGS84 semi-major axis (6,378,137 m) is no longer referenced
 // directly in this module — altitude is computed via the library's
@@ -92,6 +106,14 @@ function formatBmSigned(metres: number): string {
   const bm = metres / BRIGHT_METER_M;
   const sign = bm >= 0 ? "+" : "−";
   return `${sign}${Math.abs(bm).toFixed(9)} bm`;
+}
+
+function parseCoordInput(raw: string): number {
+  return Number(raw.replace(/[, _]/g, ""));
+}
+
+function isFiniteEcef(m: { x: number; y: number; z: number }): boolean {
+  return [m.x, m.y, m.z].every(Number.isFinite);
 }
 
 // ─── Atomic UI primitives ────────────────────────────────────────────────────
@@ -862,34 +884,84 @@ const GpsConverter: FC = () => {
 };
 
 const EcefConverter: FC = () => {
+  const [inputMode, setInputMode] = useState<EcefInputMode>("metres");
   const [xInput, setXInput] = useState(String(GODE_ITRF2020.positionM.x));
   const [yInput, setYInput] = useState(String(GODE_ITRF2020.positionM.y));
   const [zInput, setZInput] = useState(String(GODE_ITRF2020.positionM.z));
+  const [xBmInput, setXBmInput] = useState(() =>
+    (GODE_ITRF2020.positionM.x / BRIGHT_METER_M).toFixed(9),
+  );
+  const [yBmInput, setYBmInput] = useState(() =>
+    (GODE_ITRF2020.positionM.y / BRIGHT_METER_M).toFixed(9),
+  );
+  const [zBmInput, setZBmInput] = useState(() =>
+    (GODE_ITRF2020.positionM.z / BRIGHT_METER_M).toFixed(9),
+  );
+  const [latInput, setLatInput] = useState(String(GODE_GEODETIC.latitude));
+  const [lonInput, setLonInput] = useState(String(GODE_GEODETIC.longitude));
+  const [altInput, setAltInput] = useState(String(GODE_GEODETIC.altitude));
 
-  const parsed = useMemo(() => {
-    const x = Number(xInput.replace(/[, _]/g, ""));
-    const y = Number(yInput.replace(/[, _]/g, ""));
-    const z = Number(zInput.replace(/[, _]/g, ""));
-    return { x, y, z };
-  }, [xInput, yInput, zInput]);
+  const applyPositionM = useCallback((m: { x: number; y: number; z: number }) => {
+    setXInput(String(m.x));
+    setYInput(String(m.y));
+    setZInput(String(m.z));
+    setXBmInput((m.x / BRIGHT_METER_M).toFixed(9));
+    setYBmInput((m.y / BRIGHT_METER_M).toFixed(9));
+    setZBmInput((m.z / BRIGHT_METER_M).toFixed(9));
+    const g = ecefToGeodetic(m);
+    setLatInput(String(g.latitude));
+    setLonInput(String(g.longitude));
+    setAltInput(String(g.altitude));
+  }, []);
+
+  const parsedM = useMemo(() => {
+    if (inputMode === "metres") {
+      return {
+        x: parseCoordInput(xInput),
+        y: parseCoordInput(yInput),
+        z: parseCoordInput(zInput),
+      };
+    }
+    if (inputMode === "brightMeters") {
+      return {
+        x: brightMetersToMetres(parseCoordInput(xBmInput)),
+        y: brightMetersToMetres(parseCoordInput(yBmInput)),
+        z: brightMetersToMetres(parseCoordInput(zBmInput)),
+      };
+    }
+    const latitude = Number(latInput);
+    const longitude = Number(lonInput);
+    const altitude = parseCoordInput(altInput);
+    if (![latitude, longitude, altitude].every(Number.isFinite)) {
+      return { x: Number.NaN, y: Number.NaN, z: Number.NaN };
+    }
+    return geodeticToEcef({ latitude, longitude, altitude });
+  }, [
+    inputMode,
+    xInput,
+    yInput,
+    zInput,
+    xBmInput,
+    yBmInput,
+    zBmInput,
+    latInput,
+    lonInput,
+    altInput,
+  ]);
 
   const norm = useMemo(() => {
-    const { x, y, z } = parsed;
-    if (![x, y, z].every(Number.isFinite)) return Number.NaN;
-    return Math.sqrt(x * x + y * y + z * z);
-  }, [parsed]);
+    if (!isFiniteEcef(parsedM)) return Number.NaN;
+    return Math.sqrt(parsedM.x ** 2 + parsedM.y ** 2 + parsedM.z ** 2);
+  }, [parsedM]);
 
   const lightTimeFromCenterMs = Number.isFinite(norm)
     ? (norm / SPEED_OF_LIGHT_M_PER_S) * 1000
     : Number.NaN;
 
-  // ECEF → geodetic (lat/lon/alt) via the library, so the "back to GPS"
-  // direction is right there in the same panel.
   const geodetic = useMemo(() => {
-    const { x, y, z } = parsed;
-    if (![x, y, z].every(Number.isFinite)) return null;
-    return ecefToGeodetic({ x, y, z });
-  }, [parsed]);
+    if (!isFiniteEcef(parsedM)) return null;
+    return ecefToGeodetic(parsedM);
+  }, [parsedM]);
 
   const handle = useCallback(
     (set: (v: string) => void) =>
@@ -898,55 +970,207 @@ const EcefConverter: FC = () => {
     [],
   );
 
+  const switchInputMode = useCallback(
+    (next: EcefInputMode) => {
+      if (isFiniteEcef(parsedM)) {
+        applyPositionM(parsedM);
+      }
+      setInputMode(next);
+    },
+    [parsedM, applyPositionM],
+  );
+
   const applyPreset = useCallback(
     (m: { x: number; y: number; z: number }) => {
-      setXInput(String(m.x));
-      setYInput(String(m.y));
-      setZInput(String(m.z));
+      applyPositionM(m);
     },
-    [],
+    [applyPositionM],
   );
+
+  const liftToAltitude = useCallback(
+    (altM: number) => {
+      if (!geodetic) return;
+      applyPositionM(
+        geodeticToEcef({
+          latitude: geodetic.latitude,
+          longitude: geodetic.longitude,
+          altitude: altM,
+        }),
+      );
+    },
+    [geodetic, applyPositionM],
+  );
+
+  const inputLabel =
+    inputMode === "metres"
+      ? "ECEF coordinates (metres)"
+      : inputMode === "brightMeters"
+        ? "ECEF coordinates (BrightMeters)"
+        : "WGS84 geodetic (φ, λ, h)";
 
   return (
     <div className="space-card">
-      <h2 className="space-section-title">Try it: ECEF → BrightSpace</h2>
+      <h2 className="space-section-title">Try it: ECEF ↔ BrightSpace</h2>
       <p className="space-section-lead">
-        Drop in a station&apos;s ITRF2020 ECEF coordinates (metres). The page
-        divides by <code>c</code> and renders them as a BrightSpace vector,
-        plus a chord-distance from Earth&apos;s centre. Use the altitude
-        slider to lift the point along its WGS84 ellipsoid normal — same
-        latitude and longitude, different altitude.
+        Edit in metres, BrightMeters, or WGS84 geodetic — the library keeps
+        all three in sync via <code>geodeticToEcef</code> and{" "}
+        <code>ecefToGeodetic</code>. The default view is still ITRF2020
+        station coordinates in metres; switch to BrightMeters to type the
+        native unit directly, or geodetic to work from latitude and longitude.
+        The altitude slider lifts the point along its ellipsoid normal.
       </p>
-      <label className="space-label">ECEF coordinates (metres)</label>
-      <div className="space-ecef-grid">
-        <input
-          type="text"
-          className="space-input"
-          value={xInput}
-          onChange={handle(setXInput)}
-          spellCheck={false}
-          aria-label="ECEF X in metres"
-          placeholder="X (m)"
-        />
-        <input
-          type="text"
-          className="space-input"
-          value={yInput}
-          onChange={handle(setYInput)}
-          spellCheck={false}
-          aria-label="ECEF Y in metres"
-          placeholder="Y (m)"
-        />
-        <input
-          type="text"
-          className="space-input"
-          value={zInput}
-          onChange={handle(setZInput)}
-          spellCheck={false}
-          aria-label="ECEF Z in metres"
-          placeholder="Z (m)"
-        />
+
+      <div className="space-presets space-convert-modes">
+        {ECEF_INPUT_MODES.map((m) => (
+          <button
+            key={m.id}
+            type="button"
+            className="space-preset"
+            onClick={() => switchInputMode(m.id)}
+            aria-pressed={inputMode === m.id}
+            style={
+              inputMode === m.id
+                ? {
+                    borderColor: "var(--accent-primary)",
+                    color: "var(--accent-primary)",
+                  }
+                : undefined
+            }
+          >
+            {m.label}
+          </button>
+        ))}
       </div>
+
+      <label className="space-label">{inputLabel}</label>
+
+      {inputMode === "metres" ? (
+        <div className="space-ecef-grid">
+          <input
+            type="text"
+            className="space-input"
+            value={xInput}
+            onChange={handle(setXInput)}
+            spellCheck={false}
+            aria-label="ECEF X in metres"
+            placeholder="X (m)"
+          />
+          <input
+            type="text"
+            className="space-input"
+            value={yInput}
+            onChange={handle(setYInput)}
+            spellCheck={false}
+            aria-label="ECEF Y in metres"
+            placeholder="Y (m)"
+          />
+          <input
+            type="text"
+            className="space-input"
+            value={zInput}
+            onChange={handle(setZInput)}
+            spellCheck={false}
+            aria-label="ECEF Z in metres"
+            placeholder="Z (m)"
+          />
+        </div>
+      ) : null}
+
+      {inputMode === "brightMeters" ? (
+        <div className="space-ecef-grid">
+          <input
+            type="text"
+            className="space-input"
+            value={xBmInput}
+            onChange={handle(setXBmInput)}
+            spellCheck={false}
+            aria-label="ECEF X in BrightMeters"
+            placeholder="X (bm)"
+          />
+          <input
+            type="text"
+            className="space-input"
+            value={yBmInput}
+            onChange={handle(setYBmInput)}
+            spellCheck={false}
+            aria-label="ECEF Y in BrightMeters"
+            placeholder="Y (bm)"
+          />
+          <input
+            type="text"
+            className="space-input"
+            value={zBmInput}
+            onChange={handle(setZBmInput)}
+            spellCheck={false}
+            aria-label="ECEF Z in BrightMeters"
+            placeholder="Z (bm)"
+          />
+        </div>
+      ) : null}
+
+      {inputMode === "geodetic" ? (
+        <div className="space-gps-fields">
+          <div>
+            <label htmlFor="space-ecef-lat">Latitude (°)</label>
+            <input
+              id="space-ecef-lat"
+              type="text"
+              inputMode="decimal"
+              className="space-input"
+              value={latInput}
+              onChange={handle(setLatInput)}
+              spellCheck={false}
+            />
+          </div>
+          <div>
+            <label htmlFor="space-ecef-lon">Longitude (°)</label>
+            <input
+              id="space-ecef-lon"
+              type="text"
+              inputMode="decimal"
+              className="space-input"
+              value={lonInput}
+              onChange={handle(setLonInput)}
+              spellCheck={false}
+            />
+          </div>
+          <div>
+            <label htmlFor="space-ecef-alt">Altitude (m)</label>
+            <input
+              id="space-ecef-alt"
+              type="text"
+              inputMode="decimal"
+              className="space-input"
+              value={altInput}
+              onChange={handle(setAltInput)}
+              spellCheck={false}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {isFiniteEcef(parsedM) ? (
+        <div className="space-convert-mirror">
+          {inputMode !== "metres" ? (
+            <div>
+              <span className="space-convert-mirror-label">ECEF (m)</span>
+              {`[ ${formatSignedM(parsedM.x, 2)} , ${formatSignedM(parsedM.y, 2)} , ${formatSignedM(parsedM.z, 2)} ]`}
+            </div>
+          ) : null}
+          {inputMode !== "brightMeters" ? (
+            <div>
+              <span className="space-convert-mirror-label">ECEF (bm)</span>
+              {`[ ${formatBmSigned(parsedM.x)} , ${formatBmSigned(parsedM.y)} , ${formatBmSigned(parsedM.z)} ]`}
+            </div>
+          ) : null}
+          {inputMode !== "geodetic" && geodetic ? (
+            <div>
+              <span className="space-convert-mirror-label">WGS84</span>
+              {`φ ${geodetic.latitude.toFixed(7)}° · λ ${geodetic.longitude.toFixed(7)}° · h ${formatSignedM(geodetic.altitude, 2)} m`}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       {geodetic ? (
         <div style={{ marginTop: "1.25rem" }}>
@@ -966,17 +1190,7 @@ const EcefConverter: FC = () => {
             max={50_000_000}
             step={1000}
             value={Math.max(-1000, Math.min(50_000_000, geodetic.altitude))}
-            onChange={(e) => {
-              const altM = Number(e.target.value);
-              const lifted = geodeticToEcef({
-                latitude: geodetic.latitude,
-                longitude: geodetic.longitude,
-                altitude: altM,
-              });
-              setXInput(lifted.x.toFixed(4));
-              setYInput(lifted.y.toFixed(4));
-              setZInput(lifted.z.toFixed(4));
-            }}
+            onChange={(e) => liftToAltitude(Number(e.target.value))}
           />
           <div className="space-presets" style={{ marginTop: "0.75rem" }}>
             {[
@@ -991,16 +1205,7 @@ const EcefConverter: FC = () => {
                 key={p.label}
                 type="button"
                 className="space-preset"
-                onClick={() => {
-                  const lifted = geodeticToEcef({
-                    latitude: geodetic.latitude,
-                    longitude: geodetic.longitude,
-                    altitude: p.altM,
-                  });
-                  setXInput(lifted.x.toFixed(4));
-                  setYInput(lifted.y.toFixed(4));
-                  setZInput(lifted.z.toFixed(4));
-                }}
+                onClick={() => liftToAltitude(p.altM)}
               >
                 {p.label}
               </button>
@@ -1010,9 +1215,9 @@ const EcefConverter: FC = () => {
       ) : null}
 
       <div className="space-pill-grid">
-        <Pill label="X (BrightMeters)" value={formatBmSigned(parsed.x)} highlight />
-        <Pill label="Y (BrightMeters)" value={formatBmSigned(parsed.y)} highlight />
-        <Pill label="Z (BrightMeters)" value={formatBmSigned(parsed.z)} highlight />
+        <Pill label="X (BrightMeters)" value={formatBmSigned(parsedM.x)} highlight />
+        <Pill label="Y (BrightMeters)" value={formatBmSigned(parsedM.y)} highlight />
+        <Pill label="Z (BrightMeters)" value={formatBmSigned(parsedM.z)} highlight />
         <Pill
           label="‖r‖ from Earth centre"
           value={formatBmAuto(norm)}
