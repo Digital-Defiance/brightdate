@@ -219,8 +219,8 @@ const Install = () => {
             <img src="/btime-screenshot.png" title="btime screenshot" alt="btime screenshot" />
           </div>
 
-          <p className="install-tools-sub">
-            <h4>btime is provided in color for quick scanning of logs</h4>
+          <p className="install-tools-sub" style={{ fontSize: "1.2rem", fontStyle: "bold" }} >
+            btime is provided in color for quick scanning of logs
           </p>
         </motion.div>
       </motion.div>
