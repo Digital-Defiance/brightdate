@@ -208,6 +208,21 @@ const Install = () => {
             ))}
           </div>
         </motion.div>
+        <motion.div
+          className="install-tools"
+          initial={{ opacity: 0, y: 24 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.35 }}
+        >
+          <h3>btime: In Color 🌈</h3>
+	  <div style={{ backgroundColor: "#15191e", textAlign: "center", marginTop: "20px", marginBottom: "20px" }} >
+            <img src="/btime-screenshot.png" title="btime screenshot" alt="btime screenshot" />
+          </div>
+
+          <p className="install-tools-sub">
+            <h4>btime is provided in color for quick scanning of logs</h4>
+          </p>
+        </motion.div>
       </motion.div>
     </section>
   );
