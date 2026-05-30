@@ -54,6 +54,20 @@
   line-height: 1.6;
 }
 
+.install-hub-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  color: var(--accent-primary);
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(0, 255, 136, 0.4);
+  transition: opacity 0.2s ease;
+}
+
+.install-hub-link:hover {
+  opacity: 0.75;
+}
+
 .install-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -260,6 +274,156 @@
   color: var(--text-secondary);
   font-size: 0.85rem;
   line-height: 1.45;
+}
+
+.install-pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .install-pipeline {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .install-pipeline {
+    grid-template-columns: 1fr;
+  }
+}
+
+.install-pipeline-step {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.install-pipeline-label {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: 0.35rem;
+}
+
+.install-pipeline-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+}
+
+.install-pipeline-step p {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.install-stack-snippet {
+  margin-top: 0;
+}
+
+.install-ecosystem {
+  margin-top: 3rem;
+  position: relative;
+}
+
+.install-ecosystem h3 {
+  margin: 0 0 0.25rem;
+  font-size: 1.4rem;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.install-ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.install-ecosystem-card {
+  padding: 1.5rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.install-ecosystem-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.install-ecosystem-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.install-ecosystem-head h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.install-ecosystem-desc {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.install-ecosystem-card .tools-grid {
+  grid-template-columns: 1fr;
+}
+
+.install-ecosystem-brew {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+}
+
+.install-ecosystem-brew-label {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fbb040;
+}
+
+.install-ecosystem-brew code {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.install-btime-shot {
+  background: #15191e;
+  border-radius: 10px;
+  text-align: center;
+  padding: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.install-btime-shot img {
+  max-width: 100%;
+  height: auto;
 }
 
 @media (max-width: 640px) {
