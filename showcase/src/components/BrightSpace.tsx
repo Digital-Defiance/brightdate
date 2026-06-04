@@ -12,6 +12,7 @@ import {
   EARTH_MEAN_RADIUS_M,
   SPEED_OF_LIGHT_M_PER_S,
   brightMetersToMetres,
+  daysToBrightSeconds,
   ecefToGeodetic,
   fromDate,
   geodeticToEcef,
@@ -1789,6 +1790,11 @@ Vz = ${GODE_ITRF2020.velocityMPerYr.z.toFixed(5)}
 const FourDIndex: FC = () => {
   // Use the brightdate library to compute a current BrightDate at render time.
   const bd = useMemo(() => fromDate(new Date()), []);
+  // The time component of the 4D vector is carried in Bright-Seconds (bs), the
+  // same ruler as the BrightMeter spatial axes, so c = 1 holds across all four
+  // components. The calendar-day value (BD) is a display label only.
+  const tBs = daysToBrightSeconds(bd);
+  const bdLabel = bd.toFixed(3);
   const target = GODE_ITRF2020.positionM;
   const xBm = metresToBm(target.x);
   const yBm = metresToBm(target.y);
@@ -1800,23 +1806,26 @@ const FourDIndex: FC = () => {
         The 4D Spacetime Vector
       </h2>
       <p className="space-section-lead">
-        BrightDate (<code>t</code>) and BrightSpace (<code>x, y, z</code>) share
-        a single epoch and a single unit. Every record in BrightChain or
-        BrightDB is stamped with one immutable 4-tuple — no timezone, no
-        ellipsoid, no civil-calendar drift.
+        The time axis (<code>t</code>, in Bright-Seconds) and BrightSpace
+        (<code>x, y, z</code>, in BrightMeters) share a single epoch and a
+        single unit, so <code>c = 1</code> holds across all four components.
+        Every record in BrightChain or BrightDB is stamped with one immutable
+        4-tuple — no timezone, no ellipsoid, no civil-calendar drift. The
+        calendar-day value (<code>BD</code>) is a display label, not the stored
+        component.
       </p>
       <div className="space-vector-card">
         <div className="space-pill-label">
           GODE station, signed at this instant
         </div>
         <pre className="space-vector-pre">{`[t, x, y, z] = [
-  ${bd.toFixed(6)},
+  ${tBs.toFixed(3)},
   ${xBm >= 0 ? "+" : "−"}${Math.abs(xBm).toFixed(9)},
   ${yBm >= 0 ? "+" : "−"}${Math.abs(yBm).toFixed(9)},
   ${zBm >= 0 ? "+" : "−"}${Math.abs(zBm).toFixed(9)}
 ]
-  // t = SI days since J2000.0 (TAI substrate)
-  // x, y, z = BrightMeters, ECEF / ITRF2020`}</pre>
+  // t = Bright-Seconds since J2000.0 (TAI substrate) — display: BD ${bdLabel}
+  // x, y, z = BrightMeters, ECEF / ITRF2020 — c = 1 across all four axes`}</pre>
       </div>
     </div>
   );
