@@ -53,6 +53,8 @@ import {
   formatRange,
   toDuration,
 } from './formatting';
+import { ExactBrightAtto } from './ExactBrightAtto';
+import { ExactBrightDate } from './ExactBrightDate';
 import type {
   BrightDateComponents,
   BrightDateOptions,
@@ -66,7 +68,11 @@ import type {
  * Immutable BrightDate instance.
  *
  * Represents a point in time as decimal days since J2000.0 epoch
- * (January 1, 2000, 12:00:00 UTC).
+ * (January 1, 2000, 12:00:00 UTC). This is the **v1 presentation lens**
+ * (Float64): ergonomic for astronomy and UI. For canonical storage, API
+ * payloads, and consensus, prefer {@link ExactBrightAtto} or
+ * {@link ExactBrightDate} and convert via {@link fromExactBrightAtto} /
+ * {@link toExactBrightAtto}.
  *
  * @example
  * ```typescript
@@ -111,6 +117,26 @@ export class BrightDate {
     options?: BrightDateOptions,
   ): BrightDate {
     return new BrightDate(value, options);
+  }
+
+  /**
+   * Lossy v1 view of a canonical {@link ExactBrightAtto} (integer divmod → Float64).
+   */
+  static fromExactBrightAtto(
+    exact: ExactBrightAtto,
+    options?: BrightDateOptions,
+  ): BrightDate {
+    return new BrightDate(exact.toBrightDateValue(), options);
+  }
+
+  /**
+   * Lossy v1 view of {@link ExactBrightDate} (picosecond engine).
+   */
+  static fromExactBrightDate(
+    exact: ExactBrightDate,
+    options?: BrightDateOptions,
+  ): BrightDate {
+    return new BrightDate(exact.toBrightDateValue(), options);
   }
 
   /**
@@ -197,6 +223,22 @@ export class BrightDate {
   }
 
   // ─── Conversion Methods ──────────────────────────────────────────────
+
+  /**
+   * Lossy: canonical attosecond engine (v2). Rounds fractional-day Float64
+   * to the nearest attosecond tick.
+   */
+  toExactBrightAtto(): ExactBrightAtto {
+    return ExactBrightAtto.fromBrightDateValue(this.value);
+  }
+
+  /**
+   * Lossy: picosecond engine. Millisecond-aligned Unix-ms values round-trip
+   * bit-exactly through {@link ExactBrightDate}.
+   */
+  toExactBrightDate(): ExactBrightDate {
+    return ExactBrightDate.fromBrightDateValue(this.value);
+  }
 
   /**
    * Convert to a JavaScript Date.

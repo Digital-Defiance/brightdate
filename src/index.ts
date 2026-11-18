@@ -37,9 +37,28 @@
 // ─── Core Class ────────────────────────────────────────────────────────────────
 export { BrightDate } from "./BrightDate";
 
-// ─── Exact (BigInt-based) Companion ────────────────────────────────────────────
+// ─── Exact (BigInt / i128) engines ─────────────────────────────────────────────
 export { ExactBrightDate } from "./ExactBrightDate";
+export { ExactBrightAtto, EXACT_BRIGHT_ATTO_SECONDS_PER_DAY } from "./ExactBrightAtto";
 export { BrightInstant } from "./BrightInstant";
+
+// ─── Integer engine ↔ v1 decimal-day lens ──────────────────────────────────────
+export {
+  ATTOSECONDS_PER_DAY,
+  ATTOSECONDS_PER_PICOSECOND,
+  ATTOSECONDS_PER_SECOND,
+  PICOSECONDS_PER_DAY,
+  attosecondsToPicoseconds,
+  brightDateValueToAttoseconds,
+  brightDateValueToPicoseconds,
+  divEuclid,
+  picosecondsToAttoseconds,
+  formatBrightDateFromAttoseconds,
+  formatFractionOfDay,
+  remEuclid,
+  splitTicksIntoDayParts,
+  ticksToBrightDateValue,
+} from "./brightDateLens";
 
 // ─── Intervals ─────────────────────────────────────────────────────────────────
 export { BrightDateInterval } from "./intervals";

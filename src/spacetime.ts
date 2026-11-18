@@ -83,7 +83,7 @@ export interface BrightUnit {
  * BrightMeter hierarchy: SI-prefixed sub- and super-multiples of the
  * BrightMeter (= 1 Bright-Second = c × 1 s).
  */
-export const BRIGHT_METER_UNITS: Readonly<Record<string, BrightUnit>> = {
+export const BRIGHT_METER_UNITS = {
   microBrightMeter: {
     name: "Micro-BrightMeter",
     symbol: "μbm",
@@ -98,19 +98,26 @@ export const BRIGHT_METER_UNITS: Readonly<Record<string, BrightUnit>> = {
     metres: SPEED_OF_LIGHT_M_PER_S * 1e-3,
     context: "≈ 300 km (low Earth orbit)",
   },
+  kiloBrightMeter: {
+    name: "Kilo-BrightMeter",
+    symbol: "kbm",
+    seconds: 1e3,
+    metres: SPEED_OF_LIGHT_M_PER_S * 1e3,
+    context: "≈ 1 AU (Earth–Sun ≈ 0.499 kbm)",
+  },
   brightMeter: {
     name: "BrightMeter",
     symbol: "bm",
     seconds: 1,
     metres: SPEED_OF_LIGHT_M_PER_S,
-    context: "≈ 0.75 × distance to the Moon",
+    context: "1 Bright (light-second); Earth–Moon ≈ 1.28 bm",
   },
   megaBrightMeter: {
     name: "Mega-BrightMeter",
     symbol: "Mbm",
     seconds: 1e6,
     metres: SPEED_OF_LIGHT_M_PER_S * 1e6,
-    context: "≈ 2 AU (solar system radius)",
+    context: "≈ 2,000 AU (1 AU ≈ 0.499 Mbm)",
   },
   gigaBrightMeter: {
     name: "Giga-BrightMeter",
@@ -119,13 +126,13 @@ export const BRIGHT_METER_UNITS: Readonly<Record<string, BrightUnit>> = {
     metres: SPEED_OF_LIGHT_M_PER_S * 1e9,
     context: "≈ 10 parsecs (local cluster)",
   },
-} as const;
+} as const satisfies Readonly<Record<string, BrightUnit>>;
 
 /**
  * Bright-Second hierarchy: the same scalar progression as
  * {@link BRIGHT_METER_UNITS} but named from the temporal perspective.
  */
-export const BRIGHT_SECOND_UNITS: Readonly<Record<string, BrightUnit>> = {
+export const BRIGHT_SECOND_UNITS = {
   brightSecond: {
     name: "Bright-Second",
     symbol: "bs",
@@ -138,23 +145,23 @@ export const BRIGHT_SECOND_UNITS: Readonly<Record<string, BrightUnit>> = {
     symbol: "kbs",
     seconds: 1_000,
     metres: SPEED_OF_LIGHT_M_PER_S * 1_000,
-    context: "Interplanetary scale (Earth–Sun ≈ 0.5 kbs)",
+    context: "Earth–Sun ≈ 0.5 kbs; Earth–Mars ≈ 0.75 kbs",
   },
   brightMegasecond: {
     name: "Bright-Megasecond",
     symbol: "Mbs",
     seconds: 1_000_000,
     metres: SPEED_OF_LIGHT_M_PER_S * 1_000_000,
-    context: "System-wide navigation (Mars orbit ≈ 0.77 Mbs)",
+    context: "≈ 2,000 AU light-travel",
   },
   brightGigasecond: {
     name: "Bright-Gigasecond",
     symbol: "Gbs",
     seconds: 1_000_000_000,
     metres: SPEED_OF_LIGHT_M_PER_S * 1_000_000_000,
-    context: "Galactic neighborhood (Proxima Centauri ≈ 133 Gbs)",
+    context: "Proxima Centauri ≈ 0.134 Gbs",
   },
-} as const;
+} as const satisfies Readonly<Record<string, BrightUnit>>;
 
 // ─── Light-Day Hierarchy ────────────────────────────────────────────────────
 
@@ -163,7 +170,7 @@ export const BRIGHT_SECOND_UNITS: Readonly<Record<string, BrightUnit>> = {
  * native day unit. All values are **absolute** (exact integer or
  * exactly-representable rational metres).
  */
-export const LIGHT_DAY_UNITS: Readonly<Record<string, BrightUnit>> = {
+export const LIGHT_DAY_UNITS = {
   lightMilliday: {
     name: "Light-Milliday",
     symbol: "Lmd",
@@ -185,7 +192,7 @@ export const LIGHT_DAY_UNITS: Readonly<Record<string, BrightUnit>> = {
     metres: LIGHT_DAY_M * 1_000,
     context: "c × 86,400,000 s (= 25,902,068,371,200,000 m exactly)",
   },
-} as const;
+} as const satisfies Readonly<Record<string, BrightUnit>>;
 
 // ─── Conversions ────────────────────────────────────────────────────────────
 

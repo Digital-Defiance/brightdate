@@ -1,7 +1,7 @@
 {
   "name": "@brightchain/brightdate",
-  "version": "0.36.0",
-  "description": "BrightDate - A scientifically grounded universal decimal time system based on J2000.0 epoch and TAI",
+  "version": "0.38.0",
+  "description": "BrightDate - A scientifically grounded universal decimal time system based on J2000.0 epoch and TAI. Implements BrightDate v2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

@@ -38,7 +38,15 @@
  * ExactBrightDate is immutable. All operations return new instances.
  */
 
+import {
+  attosecondsToPicoseconds,
+  brightDateValueToPicoseconds,
+  picosecondsToAttoseconds,
+  PICOSECONDS_PER_DAY,
+  ticksToBrightDateValue,
+} from './brightDateLens';
 import { J2000_UNIX_MS_UTC, MS_PER_DAY } from './constants';
+import { ExactBrightAtto } from './ExactBrightAtto';
 
 /** Picoseconds per millisecond */
 const PS_PER_MS = 1_000_000_000n;
@@ -177,16 +185,29 @@ export class ExactBrightDate {
   }
 
   /**
-   * Convert to the Float64 BrightDate value (decimal days since J2000.0).
-   * This conversion is lossy for sub-microsecond precision at current-era
-   * magnitudes; use {@link toBrightDateValueBits} for a bit-preserving bridge
-   * only when you need it.
+   * Lossy v1 lens: decimal days via integer divmod on picoseconds (not float
+   * division on the canonical integer).
    */
   toBrightDateValue(): number {
-    // Split into integer days and remainder to minimize Float64 rounding
-    const days = this.picoseconds / PS_PER_DAY;
-    const remainderPs = this.picoseconds % PS_PER_DAY;
-    return Number(days) + Number(remainderPs) / Number(PS_PER_DAY);
+    return ticksToBrightDateValue(this.picoseconds, PS_PER_DAY);
+  }
+
+  /** Lossy: Float64 decimal days → picoseconds (v1 round-trip semantics). */
+  static fromBrightDateValue(bd: number): ExactBrightDate {
+    return new ExactBrightDate(brightDateValueToPicoseconds(bd));
+  }
+
+  /** Canonical v2 attosecond engine (exact multiple of picosecond ticks). */
+  toExactBrightAtto(): ExactBrightAtto {
+    return ExactBrightAtto.fromAttoseconds(
+      picosecondsToAttoseconds(this.picoseconds),
+    );
+  }
+
+  static fromExactBrightAtto(atto: ExactBrightAtto): ExactBrightDate {
+    return ExactBrightDate.fromPicoseconds(
+      attosecondsToPicoseconds(atto.attoseconds),
+    );
   }
 
   // ─── Arithmetic (all return new instances) ───────────────────────────
